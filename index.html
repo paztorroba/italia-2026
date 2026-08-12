@@ -5,1000 +5,1002 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Italia 2026 ✈️</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>Italia 2026</title>
 <style>
 :root {
-  --bg: #F7F4EF;
-  --surface: #FFFFFF;
-  --surface2: #F0EDE6;
-  --border: rgba(0,0,0,0.07);
-  --border2: rgba(0,0,0,0.13);
-  --text: #1A1714;
-  --muted: #7A7570;
-  --accent: #C8602A;
-  --accent2: #2A6E8A;
-  --green: #2D7A5A;
-  --amber: #B8750A;
-  --red: #C53030;
-  --r: 12px;
-  --r-sm: 8px;
-  --nav-h: 64px;
+  --black: #0A0A0A;
+  --white: #FFFFFF;
+  --gray-100: #F5F5F5;
+  --gray-200: #E8E8E8;
+  --gray-300: #D0D0D0;
+  --gray-500: #888888;
+  --gray-700: #444444;
+  --nav-h: 60px;
+  --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --font: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; overflow: hidden; }
-body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; }
+html { height: 100%; }
+body { font-family: var(--font); background: var(--white); color: var(--black); height: 100%; overflow: hidden; -webkit-font-smoothing: antialiased; }
 
-/* ── LAYOUT ── */
+/* ── APP SHELL ── */
 #app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
-.top-bar { flex-shrink: 0; background: var(--text); color: #fff; padding: 14px 18px 12px; padding-top: calc(14px + env(safe-area-inset-top, 0px)); display: flex; align-items: center; justify-content: space-between; }
-.top-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; }
-.top-sub { font-size: 11px; color: rgba(255,255,255,0.45); letter-spacing: 0.06em; text-transform: uppercase; }
-.sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #888; flex-shrink: 0; transition: background .3s; }
-.sync-dot.ok { background: #4ade80; }
-.sync-dot.err { background: var(--red); }
-.pages { flex: 1; overflow: hidden; position: relative; }
-.page { position: absolute; inset: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; display: none; padding: 16px; padding-bottom: calc(16px + var(--nav-h) + var(--safe-bottom)); }
-.page.active { display: block; }
 
-/* ── BOTTOM NAV ── */
-.bottom-nav { flex-shrink: 0; background: var(--surface); border-top: 1px solid var(--border); display: flex; height: calc(var(--nav-h) + var(--safe-bottom)); padding-bottom: var(--safe-bottom); }
-.nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; border: none; background: none; cursor: pointer; color: var(--muted); transition: color .15s; padding: 8px 0; }
-.nav-btn.active { color: var(--accent); }
-.nav-btn .nav-icon { font-size: 22px; line-height: 1; }
-.nav-btn .nav-label { font-size: 10px; font-weight: 500; letter-spacing: 0.03em; font-family: 'DM Sans', sans-serif; }
+/* ── TOP BAR ── */
+.top-bar {
+  flex-shrink: 0;
+  padding: calc(var(--safe-top) + 14px) 20px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+  position: relative; z-index: 10;
+}
+.top-bar-left h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+.top-bar-left p { font-size: 12px; color: var(--gray-500); margin-top: 1px; }
+.top-bar-right { display: flex; align-items: center; gap: 10px; }
+.sync-pill { display: flex; align-items: center; gap: 5px; background: var(--gray-100); border-radius: 20px; padding: 5px 10px; }
+.sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gray-300); transition: background .3s; }
+.sync-dot.ok { background: #22C55E; }
+.sync-dot.err { background: #EF4444; }
+.sync-label { font-size: 11px; color: var(--gray-500); }
+.cal-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--black); color: var(--white); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; }
 
-/* ── SECTION HEADER ── */
-.section-title { font-family: 'Playfair Display', serif; font-size: 24px; margin-bottom: 4px; }
-.section-sub { font-size: 12px; color: var(--muted); margin-bottom: 18px; }
+/* ── MAIN CONTENT ── */
+.main { flex: 1; overflow: hidden; position: relative; }
 
-/* ── CARDS ── */
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; margin-bottom: 12px; }
-.card-list { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; margin-bottom: 16px; }
+/* ── DAY CAROUSEL ── */
+#carousel-wrap {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+}
+.carousel-nav {
+  flex-shrink: 0;
+  display: flex; align-items: center; gap: 0;
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; padding: 12px 16px;
+  border-bottom: 1px solid var(--gray-200);
+  gap: 6px;
+}
+.carousel-nav::-webkit-scrollbar { display: none; }
+.day-pill {
+  flex-shrink: 0; padding: 7px 14px;
+  border-radius: 20px; border: 1.5px solid var(--gray-200);
+  background: var(--white); cursor: pointer;
+  font-size: 12px; font-weight: 500; color: var(--gray-500);
+  transition: all .15s; white-space: nowrap;
+  font-family: var(--font);
+}
+.day-pill.active {
+  background: var(--black); border-color: var(--black);
+  color: var(--white);
+}
+.day-pill.today { border-color: var(--black); color: var(--black); }
 
-/* ── BADGES ── */
-.badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 20px; letter-spacing: 0.03em; white-space: nowrap; }
-.badge-green { background: #D6F0E4; color: #1A5C3A; }
-.badge-amber { background: #FEF3CD; color: #7A4F06; }
-.badge-blue { background: #DCF0F8; color: #1A4D63; }
-.badge-gray { background: #EEEBE5; color: #5A5652; }
-.badge-accent { background: #FAE8DC; color: #7A2E0A; }
+/* ── SWIPE CONTAINER ── */
+.swipe-container {
+  flex: 1; overflow: hidden; position: relative;
+}
+.swipe-track {
+  display: flex; height: 100%;
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+  will-change: transform;
+}
+.day-card {
+  flex-shrink: 0; width: 100%; height: 100%;
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 16px);
+}
 
-/* ── STATS ROW ── */
-.stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; }
-.stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
-.stat-val { font-family: 'Playfair Display', serif; font-size: 22px; }
-.stat-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+/* ── DAY HERO ── */
+.day-hero {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--gray-200);
+  position: relative;
+}
+.day-hero-top { display: flex; align-items: flex-start; justify-content: space-between; }
+.day-label { font-size: 11px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+.day-title { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.15; }
+.day-date-badge {
+  background: var(--black); color: var(--white);
+  border-radius: 10px; padding: 6px 10px; text-align: center;
+  flex-shrink: 0; margin-left: 12px;
+}
+.day-date-badge .badge-day { font-size: 18px; font-weight: 700; line-height: 1; }
+.day-date-badge .badge-month { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.7; margin-top: 1px; }
+.day-hero-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.meta-chip {
+  display: flex; align-items: center; gap: 5px;
+  background: var(--gray-100); border-radius: 20px;
+  padding: 5px 10px; font-size: 12px; color: var(--gray-700);
+}
+.meta-chip .chip-icon { font-size: 13px; }
+.today-badge {
+  display: inline-block; background: var(--black); color: var(--white);
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.08em; padding: 3px 8px; border-radius: 20px;
+  margin-left: 8px; vertical-align: middle;
+}
+.done-btn-hero {
+  position: absolute; bottom: 16px; right: 20px;
+  background: none; border: 1.5px solid var(--gray-300);
+  border-radius: 20px; padding: 6px 14px; font-size: 12px;
+  font-weight: 500; color: var(--gray-500); cursor: pointer;
+  font-family: var(--font); transition: all .15s;
+}
+.done-btn-hero.done { background: var(--black); border-color: var(--black); color: var(--white); }
 
-/* ── PROGRESS BAR ── */
-.prog-wrap { margin-bottom: 18px; }
-.prog-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-.prog-bg { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
-.prog-fill { height: 100%; border-radius: 3px; transition: width .5s; background: var(--green); }
-.prog-fill.warn { background: var(--amber); }
-.prog-fill.over { background: var(--red); }
+/* ── SECTIONS ── */
+.day-section { padding: 16px 20px; border-bottom: 1px solid var(--gray-200); }
+.day-section:last-child { border-bottom: none; }
+.section-label {
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--gray-500); margin-bottom: 10px;
+}
 
-/* ── CITY BLOCK ── */
-.city-block { margin-bottom: 20px; }
-.city-hdr { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: var(--r) var(--r) 0 0; color: #fff; }
-.city-hdr-name { font-family: 'Playfair Display', serif; font-size: 16px; }
-.city-hdr-meta { font-size: 10px; color: rgba(255,255,255,0.5); margin-left: auto; white-space: nowrap; }
-.drag-hint { font-size: 10px; color: rgba(255,255,255,0.35); }
+/* ── ACTIVITIES ── */
+.activity-list { display: flex; flex-direction: column; gap: 8px; }
+.activity-item { display: flex; align-items: flex-start; gap: 10px; }
+.activity-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--black); margin-top: 7px; flex-shrink: 0; }
+.activity-text { font-size: 14px; line-height: 1.5; color: var(--black); }
 
-/* ── DAY ROW ── */
-.day-row { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--border); background: var(--surface); position: relative; transition: background .12s; }
-.day-row:last-child { border-bottom: none; border-radius: 0 0 var(--r) var(--r); }
-.day-row.locked { background: var(--surface2); }
-.day-row.dragging { opacity: 0.35; }
-.day-row.drag-over { border-top: 2px solid var(--accent); }
-.day-handle { display: flex; flex-direction: column; gap: 3px; padding: 4px 2px; cursor: grab; flex-shrink: 0; margin-top: 3px; }
-.day-handle span { display: block; width: 14px; height: 1.5px; background: var(--muted); border-radius: 1px; }
-.day-row.locked .day-handle { opacity: 0.2; cursor: not-allowed; }
-.day-meta { flex-shrink: 0; width: 44px; }
-.day-date { font-size: 11px; color: var(--muted); display: block; }
-.day-weekday { font-size: 11px; font-weight: 600; color: var(--muted); }
-.day-body { flex: 1; min-width: 0; }
-.day-city { font-size: 14px; font-weight: 600; color: var(--text); }
-.day-checkin { font-size: 11px; color: var(--green); font-weight: 500; margin-top: 2px; }
-.day-notes { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.5; }
-.day-transport { font-size: 11px; color: var(--accent2); margin-top: 3px; }
-.day-pending { font-size: 11px; color: var(--amber); margin-top: 3px; font-style: italic; }
-.day-actions { display: flex; gap: 4px; flex-shrink: 0; }
-.icon-btn { background: none; border: 1px solid var(--border2); border-radius: var(--r-sm); width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; color: var(--muted); transition: all .12s; flex-shrink: 0; }
-.icon-btn:active { background: var(--surface2); }
-.done-chip { font-size: 10px; padding: 3px 8px; border-radius: 20px; border: 1px solid var(--border2); background: none; cursor: pointer; color: var(--muted); white-space: nowrap; font-family: 'DM Sans', sans-serif; font-weight: 500; transition: all .15s; }
-.done-chip.done { background: var(--green); border-color: var(--green); color: #fff; }
-
-/* ── EXPENSE LIST ── */
-.expense-item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--border); background: var(--surface); }
-.expense-item:last-child { border-bottom: none; }
-.cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.expense-body { flex: 1; min-width: 0; }
-.expense-name { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.expense-sub { font-size: 11px; color: var(--muted); }
-.expense-right { text-align: right; flex-shrink: 0; }
-.expense-amt { font-size: 14px; font-weight: 600; }
-.list-section-hdr { font-size: 10px; text-transform: uppercase; letter-spacing: 0.09em; color: var(--muted); font-weight: 600; padding: 10px 14px 5px; background: var(--surface2); border-bottom: 1px solid var(--border); }
-
-/* ── TICKET ── */
-.ticket-item { display: flex; align-items: flex-start; gap: 12px; padding: 13px 14px; border-bottom: 1px solid var(--border); background: var(--surface); }
-.ticket-item:last-child { border-bottom: none; }
-.ticket-icon { width: 36px; height: 36px; border-radius: 8px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
-.ticket-body { flex: 1; min-width: 0; }
-.ticket-name { font-size: 13px; font-weight: 500; }
-.ticket-meta { font-size: 11px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
-.ticket-link { font-size: 11px; color: var(--accent2); display: inline-block; margin-top: 3px; }
-
-/* ── ACT ── */
-.act-item { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--border); background: var(--surface); }
-.act-item:last-child { border-bottom: none; }
-.check-box { width: 22px; height: 22px; border-radius: 6px; border: 1.5px solid var(--border2); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; margin-top: 1px; transition: all .15s; font-size: 13px; }
-.check-box.checked { background: var(--green); border-color: var(--green); color: #fff; }
-.act-body { flex: 1; min-width: 0; }
-.act-name { font-size: 13px; font-weight: 500; }
-.act-city { font-size: 11px; color: var(--muted); }
+/* ── TRANSPORT ── */
+.transport-card {
+  background: var(--gray-100); border-radius: 12px;
+  padding: 12px 14px; display: flex; align-items: flex-start; gap: 10px;
+}
+.transport-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.transport-text { font-size: 13px; line-height: 1.5; color: var(--gray-700); }
 
 /* ── MAP ── */
-#map { height: calc(100vh - var(--nav-h) - 130px); border-radius: var(--r); overflow: hidden; margin-bottom: 12px; z-index: 0; }
-.map-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.map-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 12px; cursor: pointer; transition: border-color .15s; }
-.map-card:active { border-color: var(--accent); }
-.map-card-name { font-size: 13px; font-weight: 600; }
-.map-card-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-.map-card-days { font-size: 11px; color: var(--accent); font-weight: 500; margin-top: 4px; }
+.map-section { padding: 16px 20px; }
+.map-section .section-label { margin-bottom: 10px; }
+#day-map-container { position: relative; }
+.day-map {
+  width: 100%; height: 220px; border-radius: 14px;
+  overflow: hidden; border: 1px solid var(--gray-200);
+  background: var(--gray-100);
+}
+.map-loading {
+  position: absolute; inset: 0; display: flex;
+  align-items: center; justify-content: center;
+  background: var(--gray-100); border-radius: 14px;
+  font-size: 13px; color: var(--gray-500);
+}
+.open-maps-btn {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  width: 100%; margin-top: 10px; padding: 12px;
+  background: var(--black); color: var(--white); border: none;
+  border-radius: 12px; font-size: 14px; font-weight: 500;
+  cursor: pointer; font-family: var(--font); text-decoration: none;
+}
+.map-places { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.map-place-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; background: var(--gray-100); border-radius: 10px;
+}
+.map-place-num {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--black); color: var(--white);
+  font-size: 10px; font-weight: 700; display: flex;
+  align-items: center; justify-content: center; flex-shrink: 0;
+}
+.map-place-name { font-size: 12px; color: var(--gray-700); flex: 1; }
 
-/* ── FAB ── */
-.fab { position: fixed; bottom: calc(var(--nav-h) + var(--safe-bottom) + 16px); right: 16px; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); color: #fff; border: none; font-size: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 16px rgba(200,96,42,0.4); z-index: 50; transition: transform .15s; }
-.fab:active { transform: scale(0.93); }
-.fab.hidden { display: none; }
+/* ── SWAP SECTION ── */
+.swap-section { padding: 16px 20px; }
+.swap-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 13px; border: 1.5px dashed var(--gray-300);
+  border-radius: 12px; background: none; font-size: 14px;
+  color: var(--gray-500); cursor: pointer; font-family: var(--font);
+  transition: all .15s;
+}
+.swap-btn:active { background: var(--gray-100); }
+.edit-btn-section {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 13px; border: 1.5px solid var(--gray-200);
+  border-radius: 12px; background: none; font-size: 14px;
+  color: var(--black); cursor: pointer; font-family: var(--font);
+  transition: all .15s; margin-top: 8px;
+}
+.edit-btn-section:active { background: var(--gray-100); }
 
-/* ── MODAL ── */
-.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; align-items: flex-end; justify-content: center; }
+/* ── CALENDAR OVERLAY ── */
+.cal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5); z-index: 100;
+  align-items: flex-end; justify-content: center;
+}
+.cal-overlay.open { display: flex; }
+.cal-sheet {
+  background: var(--white); border-radius: 20px 20px 0 0;
+  width: 100%; max-height: 80vh; overflow-y: auto;
+  padding: 16px 20px calc(24px + var(--safe-bottom));
+}
+.cal-handle { width: 36px; height: 4px; background: var(--gray-300); border-radius: 2px; margin: 0 auto 16px; }
+.cal-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+
+/* Month block */
+.cal-month { margin-bottom: 24px; }
+.cal-month-name {
+  font-size: 13px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--black); margin-bottom: 10px;
+}
+.cal-weekdays {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 4px;
+}
+.cal-weekday {
+  text-align: center; font-size: 11px; font-weight: 600;
+  color: var(--gray-500); padding-bottom: 6px;
+}
+.cal-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.cal-cell {
+  aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; font-size: 14px; font-weight: 500;
+  cursor: default; color: var(--gray-300); position: relative;
+  font-family: var(--font);
+}
+.cal-cell.in-trip {
+  color: var(--black); cursor: pointer;
+  border-radius: 50%; transition: background .12s;
+}
+.cal-cell.in-trip:active { background: var(--gray-200); }
+.cal-cell.is-current {
+  background: var(--black); color: var(--white) !important;
+  border-radius: 50%;
+}
+.cal-cell.is-today:not(.is-current) {
+  border: 2px solid var(--black);
+}
+/* City color dot under the date */
+.cal-cell .city-dot {
+  position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%);
+  width: 4px; height: 4px; border-radius: 50%;
+}
+.cal-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.cal-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--gray-700); }
+.cal-legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── MODAL: Edit / Swap ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5); z-index: 200;
+  align-items: flex-end; justify-content: center;
+}
 .modal-overlay.open { display: flex; }
-.modal { background: var(--surface); border-radius: 20px 20px 0 0; padding: 20px 18px; width: 100%; max-height: 92vh; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: calc(20px + var(--safe-bottom)); }
-.modal-handle { width: 36px; height: 4px; background: var(--border2); border-radius: 2px; margin: 0 auto 18px; }
-.modal-title { font-family: 'Playfair Display', serif; font-size: 20px; margin-bottom: 18px; }
-.modal-actions { display: flex; gap: 10px; margin-top: 18px; }
-.modal-actions .btn { flex: 1; }
-
-/* ── FORM ── */
+.modal-sheet {
+  background: var(--white); border-radius: 20px 20px 0 0;
+  width: 100%; max-height: 90vh; overflow-y: auto;
+  padding: 20px 20px calc(20px + var(--safe-bottom));
+}
+.modal-handle { width: 36px; height: 4px; background: var(--gray-300); border-radius: 2px; margin: 0 auto 18px; }
+.modal-title { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 18px; }
 .field { margin-bottom: 14px; }
-.field label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; display: block; margin-bottom: 6px; font-weight: 500; }
-.field input, .field select, .field textarea { width: 100%; padding: 11px 13px; border: 1px solid var(--border2); border-radius: var(--r-sm); background: var(--surface); color: var(--text); font-size: 15px; font-family: 'DM Sans', sans-serif; outline: none; -webkit-appearance: none; }
-.field input:focus, .field select:focus { border-color: var(--accent); }
-.field textarea { resize: vertical; min-height: 80px; }
+.field label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-500); display: block; margin-bottom: 6px; }
+.field input, .field select, .field textarea {
+  width: 100%; padding: 12px 14px;
+  border: 1.5px solid var(--gray-200); border-radius: 12px;
+  background: var(--white); color: var(--black);
+  font-size: 15px; font-family: var(--font); outline: none;
+  -webkit-appearance: none;
+}
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--black); }
+.field textarea { resize: vertical; min-height: 100px; line-height: 1.5; }
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.btn { padding: 13px 18px; border-radius: var(--r-sm); border: none; cursor: pointer; font-size: 15px; font-family: 'DM Sans', sans-serif; font-weight: 600; transition: all .15s; text-align: center; }
-.btn-primary { background: var(--accent); color: #fff; }
-.btn-ghost { background: var(--surface2); color: var(--muted); }
+.modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+.btn { padding: 14px 18px; border-radius: 14px; border: none; cursor: pointer; font-size: 15px; font-family: var(--font); font-weight: 600; flex: 1; transition: all .15s; }
+.btn-black { background: var(--black); color: var(--white); }
+.btn-gray { background: var(--gray-100); color: var(--black); }
 
-/* ── CAT BAR ── */
-.cat-bars { display: flex; flex-direction: column; gap: 8px; }
-.cat-bar-row { display: flex; align-items: center; gap: 8px; }
-.cat-bar-label { font-size: 12px; color: var(--muted); width: 90px; flex-shrink: 0; }
-.cat-bar-bg { flex: 1; height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
-.cat-bar-fill { height: 100%; border-radius: 3px; transition: width .4s; }
-.cat-bar-amt { font-size: 12px; font-weight: 500; width: 55px; text-align: right; flex-shrink: 0; }
-
-/* ── LOADING ── */
-.loading { display: flex; align-items: center; justify-content: center; padding: 40px; color: var(--muted); font-size: 14px; gap: 10px; }
-.spinner { width: 18px; height: 18px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ── EMPTY ── */
-.empty { text-align: center; padding: 32px 16px; color: var(--muted); font-size: 13px; }
+/* ── SWAP MODAL ── */
+.swap-day-list { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.swap-day-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px; border: 1.5px solid var(--gray-200);
+  border-radius: 14px; cursor: pointer; transition: all .15s;
+  background: var(--white);
+}
+.swap-day-item:active { background: var(--gray-100); }
+.swap-day-item.selected { border-color: var(--black); background: var(--gray-100); }
+.swap-day-item.disabled { opacity: 0.35; pointer-events: none; }
+.swap-day-date { font-size: 13px; font-weight: 700; flex-shrink: 0; width: 44px; }
+.swap-day-name { font-size: 13px; color: var(--gray-700); flex: 1; }
+.swap-day-check { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--gray-300); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+.swap-day-item.selected .swap-day-check { background: var(--black); border-color: var(--black); color: var(--white); }
 
 /* ── TOAST ── */
-.toast { position: fixed; bottom: calc(var(--nav-h) + var(--safe-bottom) + 12px); left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: #fff; padding: 10px 18px; border-radius: 20px; font-size: 13px; opacity: 0; transition: all .3s; z-index: 300; white-space: nowrap; pointer-events: none; }
+.toast {
+  position: fixed; bottom: calc(var(--nav-h) + var(--safe-bottom) + 12px);
+  left: 50%; transform: translateX(-50%) translateY(16px);
+  background: var(--black); color: var(--white);
+  padding: 11px 20px; border-radius: 24px; font-size: 13px; font-weight: 500;
+  opacity: 0; transition: all .3s; z-index: 300; white-space: nowrap; pointer-events: none;
+}
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── LOADING ── */
+.loading-screen {
+  position: fixed; inset: 0; background: var(--white);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 999; gap: 16px;
+}
+.loading-title { font-size: 24px; font-weight: 700; }
+.loading-sub { font-size: 14px; color: var(--gray-500); }
+.spinner { width: 24px; height: 24px; border: 2.5px solid var(--gray-200); border-top-color: var(--black); border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
-<div id="app">
+
+<div class="loading-screen" id="loading">
+  <div class="loading-title">Italia 2026 ✈️</div>
+  <div class="spinner"></div>
+  <div class="loading-sub">Cargando itinerario...</div>
+</div>
+
+<div id="app" style="display:none">
   <div class="top-bar">
-    <div>
-      <div class="top-title">Italia 2026 ✈️</div>
-      <div class="top-sub">15 ago — 7 sep · 24 noches</div>
+    <div class="top-bar-left">
+      <h1>Italia 2026 ✈️</h1>
+      <p>15 ago — 7 sep · 24 noches</p>
     </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <span style="font-size:11px;color:rgba(255,255,255,0.4)" id="sync-label">conectando...</span>
-      <div class="sync-dot" id="sync-dot"></div>
+    <div class="top-bar-right">
+      <div class="sync-pill">
+        <div class="sync-dot" id="sync-dot"></div>
+        <span class="sync-label" id="sync-label">...</span>
+      </div>
+      <button class="cal-btn" onclick="openCal()" aria-label="Calendario">📅</button>
     </div>
   </div>
 
-  <div class="pages">
-    <div class="page active" id="page-itinerario">
-      <div class="section-title">Itinerario</div>
-      <div class="section-sub">Arrastrá los días para reorganizar planes en la misma ciudad</div>
-      <div id="itinerario-content"><div class="loading"><div class="spinner"></div> Cargando...</div></div>
-    </div>
-
-    <div class="page" id="page-gastos">
-      <div class="section-title">Gastos</div>
-      <div class="section-sub">Presupuesto y control de pagos</div>
-      <div class="stats-row" id="gastos-stats"></div>
-      <div class="prog-wrap">
-        <div class="prog-meta"><span id="prog-label">—</span><span id="prog-pct" style="font-weight:600">0%</span></div>
-        <div class="prog-bg"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  <div class="main">
+    <div id="carousel-wrap">
+      <div class="carousel-nav" id="carousel-nav"></div>
+      <div class="swipe-container" id="swipe-container">
+        <div class="swipe-track" id="swipe-track"></div>
       </div>
-      <div class="card" style="margin-bottom:14px">
-        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px">Presupuesto total (USD)</div>
-        <input type="number" id="budget-input" value="8000" style="font-size:22px;font-family:'Playfair Display',serif;border:none;background:transparent;width:100%;padding:0;outline:none;color:var(--text)" oninput="saveBudget()">
-      </div>
-      <div class="card" style="margin-bottom:14px">
-        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px">Por categoría</div>
-        <div class="cat-bars" id="cat-bars"></div>
-      </div>
-      <div class="card-list" id="expense-list"><div class="loading"><div class="spinner"></div></div></div>
-    </div>
-
-    <div class="page" id="page-tickets">
-      <div class="section-title">Tickets</div>
-      <div class="section-sub">Reservas confirmadas y pendientes</div>
-      <div class="card-list" id="tickets-list"><div class="loading"><div class="spinner"></div></div></div>
-    </div>
-
-    <div class="page" id="page-actividades">
-      <div class="section-title">Actividades</div>
-      <div class="section-sub">Lugares y planes por ciudad</div>
-      <div id="actividades-content"><div class="loading"><div class="spinner"></div></div></div>
-    </div>
-
-    <div class="page" id="page-mapa">
-      <div class="section-title">Mapa</div>
-      <div class="section-sub">Tapeá un destino para ver el detalle</div>
-      <div id="map"></div>
-      <div class="map-cards" id="map-cards"></div>
-    </div>
-  </div>
-
-  <nav class="bottom-nav">
-    <button class="nav-btn active" onclick="showPage('itinerario',this)">
-      <span class="nav-icon">📅</span><span class="nav-label">Itinerario</span>
-    </button>
-    <button class="nav-btn" onclick="showPage('gastos',this)">
-      <span class="nav-icon">💸</span><span class="nav-label">Gastos</span>
-    </button>
-    <button class="nav-btn" onclick="showPage('tickets',this)">
-      <span class="nav-icon">🎫</span><span class="nav-label">Tickets</span>
-    </button>
-    <button class="nav-btn" onclick="showPage('actividades',this)">
-      <span class="nav-icon">🗺️</span><span class="nav-label">Actividades</span>
-    </button>
-    <button class="nav-btn" onclick="showPage('mapa',this)">
-      <span class="nav-icon">📍</span><span class="nav-label">Mapa</span>
-    </button>
-  </nav>
-</div>
-
-<!-- FABs -->
-<button class="fab" id="fab-gastos" onclick="openExpenseModal(null)" style="display:none">+</button>
-<button class="fab" id="fab-tickets" onclick="openTicketModal(null)" style="display:none">+</button>
-
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
-
-<!-- MODAL: Expense -->
-<div class="modal-overlay" id="modal-expense">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title" id="expense-modal-title">Nuevo gasto</div>
-    <input type="hidden" id="e-id">
-    <div class="field-row">
-      <div class="field"><label>Descripción</label><input type="text" id="e-desc" placeholder="Ej: Airbnb Palermo"></div>
-      <div class="field"><label>Empresa</label><input type="text" id="e-empresa" placeholder="Airbnb"></div>
-    </div>
-    <div class="field-row">
-      <div class="field"><label>Total USD</label><input type="number" id="e-total" placeholder="0" oninput="calcCu()"></div>
-      <div class="field"><label>c/u USD</label><input type="number" id="e-cu" placeholder="0" readonly style="background:var(--surface2);color:var(--muted)"></div>
-    </div>
-    <div class="field-row">
-      <div class="field"><label>Categoría</label>
-        <select id="e-cat">
-          <option value="Alojamiento">Alojamiento</option>
-          <option value="Pasajes">Pasajes</option>
-          <option value="Actividades">Actividades</option>
-          <option value="Comida">Comida</option>
-          <option value="Transporte">Transporte</option>
-          <option value="Otro">Otro</option>
-        </select>
-      </div>
-      <div class="field"><label>Ciudad</label>
-        <select id="e-ciudad">
-          <option>Palermo</option><option>Agrigento</option><option>Catania</option>
-          <option>Amalfi</option><option>Positano</option><option>Roma</option><option>General</option>
-        </select>
-      </div>
-    </div>
-    <div class="field-row">
-      <div class="field"><label>Estado</label>
-        <select id="e-estado"><option value="true">Pagado ✓</option><option value="false">Pendiente</option></select>
-      </div>
-      <div class="field"><label>Pagó</label>
-        <select id="e-pago"><option>Ber</option><option>Los dos</option><option>Otro</option></select>
-      </div>
-    </div>
-    <div class="field"><label>Notas / Código / Link</label><input type="text" id="e-notas" placeholder="Código de reserva, link..."></div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal('modal-expense')">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveExpense()">Guardar</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL: Ticket -->
-<div class="modal-overlay" id="modal-ticket">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title" id="ticket-modal-title">Nuevo ticket</div>
-    <input type="hidden" id="t-id">
-    <div class="field-row">
-      <div class="field"><label>Nombre</label><input type="text" id="t-nombre" placeholder="Ej: Tren Catania→Salerno"></div>
-      <div class="field"><label>Tipo</label>
-        <select id="t-tipo">
-          <option value="✈️">Vuelo</option><option value="🚂">Tren</option>
-          <option value="🏠">Alojamiento</option><option value="⛵">Ferry/Barco</option>
-          <option value="🎟️">Entrada</option><option value="🚌">Bus</option><option value="📄">Otro</option>
-        </select>
-      </div>
-    </div>
-    <div class="field-row">
-      <div class="field"><label>Fecha</label><input type="text" id="t-fecha" placeholder="27/08/26"></div>
-      <div class="field"><label>Estado</label>
-        <select id="t-estado"><option value="confirmado">Confirmado ✓</option><option value="pendiente">Pendiente</option></select>
-      </div>
-    </div>
-    <div class="field"><label>Detalles / Código</label><input type="text" id="t-detalles" placeholder="PNR, horario, código de reserva..."></div>
-    <div class="field"><label>Link</label><input type="text" id="t-link" placeholder="https://..."></div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal('modal-ticket')">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveTicket()">Guardar</button>
-    </div>
+<!-- CALENDAR OVERLAY -->
+<div class="cal-overlay" id="cal-overlay" onclick="if(event.target===this)closeCal()">
+  <div class="cal-sheet">
+    <div class="cal-handle"></div>
+    <div class="cal-title">Ir a un día</div>
+    <div id="cal-content"></div>
   </div>
 </div>
 
 <!-- MODAL: Edit Day -->
-<div class="modal-overlay" id="modal-day">
-  <div class="modal">
+<div class="modal-overlay" id="modal-edit" onclick="if(event.target===this)closeModal('modal-edit')">
+  <div class="modal-sheet">
     <div class="modal-handle"></div>
     <div class="modal-title">Editar día</div>
-    <input type="hidden" id="d-si"><input type="hidden" id="d-di">
-    <div class="field"><label>Destino / Plan</label><input type="text" id="d-ciudad"></div>
+    <input type="hidden" id="edit-idx">
+    <div class="field"><label>Destino / Plan principal</label><input type="text" id="edit-ciudad"></div>
     <div class="field-row">
-      <div class="field"><label>Check-in</label><input type="text" id="d-checkin" placeholder="3pm"></div>
-      <div class="field"><label>Transporte</label><input type="text" id="d-transport" placeholder="Tren local"></div>
+      <div class="field"><label>Check-in</label><input type="text" id="edit-checkin" placeholder="3pm"></div>
+      <div class="field"><label>Transporte</label><input type="text" id="edit-transport" placeholder="Tren local"></div>
     </div>
-    <div class="field"><label>Precio transporte</label><input type="text" id="d-precio" placeholder="€13"></div>
-    <div class="field"><label>Notas / Actividades</label><textarea id="d-notas" rows="4"></textarea></div>
-    <div class="field"><label>⚠️ Pendiente / Alerta</label><input type="text" id="d-pendiente" placeholder="Buscar barco con anticipación..."></div>
+    <div class="field"><label>Actividades del día</label><textarea id="edit-actividades" rows="5"></textarea></div>
+    <div class="field"><label>⚠️ Nota / Pendiente</label><input type="text" id="edit-pendiente" placeholder="Algo a recordar..."></div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal('modal-day')">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveDay()">Guardar</button>
+      <button class="btn btn-gray" onclick="closeModal('modal-edit')">Cancelar</button>
+      <button class="btn btn-black" onclick="saveEdit()">Guardar</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL: Edit Activity -->
-<div class="modal-overlay" id="modal-act">
-  <div class="modal">
+<!-- MODAL: Swap -->
+<div class="modal-overlay" id="modal-swap" onclick="if(event.target===this)closeModal('modal-swap')">
+  <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title">Editar actividad</div>
-    <input type="hidden" id="a-idx">
-    <div class="field"><label>Nombre</label><input type="text" id="a-nombre"></div>
-    <div class="field-row">
-      <div class="field"><label>Ciudad</label><input type="text" id="a-ciudad"></div>
-      <div class="field"><label>Precio</label><input type="text" id="a-precio" placeholder="Libre, €15..."></div>
-    </div>
-    <div class="field"><label>Link</label><input type="text" id="a-link" placeholder="https://..."></div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal('modal-act')">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveAct()">Guardar</button>
+    <div class="modal-title" id="swap-title">Intercambiar con...</div>
+    <p style="font-size:13px;color:var(--gray-500);margin-bottom:16px">Elegí otro día de la misma ciudad para intercambiar los planes</p>
+    <div class="swap-day-list" id="swap-day-list"></div>
+    <div class="modal-actions" style="margin-top:20px">
+      <button class="btn btn-gray" onclick="closeModal('modal-swap')">Cancelar</button>
+      <button class="btn btn-black" onclick="confirmSwap()" id="swap-confirm-btn">Intercambiar</button>
     </div>
   </div>
 </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, onValue, set, update, push, remove, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+<div class="toast" id="toast"></div>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyD0GMzI30zVaBPaQGc01lk_T2gvV2Co_WI",
-  authDomain: "italia-2026-ac0e8.firebaseapp.com",
-  databaseURL: "https://italia-2026-ac0e8-default-rtdb.firebaseio.com",
-  projectId: "italia-2026-ac0e8",
-  storageBucket: "italia-2026-ac0e8.firebasestorage.app",
-  messagingSenderId: "806259614262",
-  appId: "1:806259614262:web:9d23d84041184ffcb1ee97"
+<script>
+// ── FIREBASE CONFIG ──
+const FIREBASE_URL = 'https://italia-2026-ac0e8-default-rtdb.firebaseio.com';
+const MAPS_KEY = 'AIzaSyC34Kipi5khajrswyx7rNnuwSGQ_ywyxyg';
+
+// ── DEFAULT DATA ──
+const DEFAULT_DAYS = [
+  {fecha:'15-08',dia:'Sáb',ciudad:'Buenos Aires → Palermo',seccion:'Vuelo',checkin:'21:20hs',transport:'ITA Airways · Vuelo a Roma (12:50hs) + Palermo (1:10hs)',actividades:'Salida 21:20hs · Llegada Roma 18:40hs → Palermo 22:30hs · Mochila + Carry On',pendiente:'Vuelo Internacional: ITA 21:20',locked:true,places:[]},
+  {fecha:'16-08',dia:'Dom',ciudad:'Palermo',seccion:'Palermo',checkin:'1pm',transport:'-',actividades:'10:30 Palazzo dei Normanni y Cappella Palatina\nMañana: Centro Histórico — Quattro Canti, Piazza Pretoria, Chiesa della Martorana, Catedral\nAlmuerzo en Mercato di Ballarò o Mercato del Capo\nTarde: Teatro Massimo, Via Maqueda\nCena: zona Piazza San Domenico o Kalsa',pendiente:'',locked:false,places:['Palazzo dei Normanni, Palermo','Quattro Canti, Palermo','Mercato di Ballarò, Palermo','Teatro Massimo, Palermo','Piazza San Domenico, Palermo']},
+  {fecha:'17-08',dia:'Lun',ciudad:'Palermo / Mondello',seccion:'Palermo',checkin:'-',transport:'Colectivo Línea 806 (30–40 min)',actividades:'Ir temprano a la playa\nAlquilar sombrilla o tumbona\nAlmorzar ahí\nOpcional: Riserva Naturale Capo Gallo',pendiente:'',locked:false,places:['Mondello Beach, Palermo','Riserva Naturale Capo Gallo, Palermo']},
+  {fecha:'18-08',dia:'Mar',ciudad:'Cefalù',seccion:'Palermo',checkin:'-',transport:'Tren Palermo → Cefalù (1hs)',actividades:'Mañana: Subir la Roca (~2hs)\nAlmuerzo en centro ciudad\nTarde: playa + Cefalù Cathedral + Casco histórico + Puerto viejo + Lavatoio Medievale + Callejuelas',pendiente:'',locked:false,places:['La Rocca, Cefalù','Cattedrale di Cefalù','Lavatoio Medievale, Cefalù','Porto di Cefalù']},
+  {fecha:'19-08',dia:'Mié',ciudad:'Palermo / Porticello',seccion:'Palermo',checkin:'-',transport:'Tren Palermo → Santa Flavia (20m + 25m a pie)',actividades:'Mañana: Porticello, playa y posible Trekking Parco Monte Catalfano\nAlmuerzo: Puerto de Porticello\nTarde: Forum Palermo Shopping (cierra 9pm)',pendiente:'',locked:false,places:['Porticello, Santa Flavia','Parco Monte Catalfano, Bagheria','Forum Palermo']},
+  {fecha:'20-08',dia:'Jue',ciudad:'Agrigento',seccion:'Agrigento',checkin:'3pm',transport:'Tren + Bus matutino 10:32–13:55',actividades:'Mediodía: Almuerzo + check-in\nTarde: Stair of the Turks (sacar entradas ahí)\nTransporte: Temple Tour Bus o taxi',pendiente:'Tren confirmado · Codice: 2877459606 y 2877459607',locked:true,places:['Scala dei Turchi, Realmonte','Agrigento centro']},
+  {fecha:'21-08',dia:'Vie',ciudad:'Agrigento',seccion:'Agrigento',checkin:'-',transport:'-',actividades:'Mañana: Punta Bianca / recorrer ciudad\nTarde + atardecer: Valle dei Templi (entrada 16:30hs)',pendiente:'Entrada Valle dei Templi confirmada · Cod: DWD5BDWH',locked:false,places:['Punta Bianca, Agrigento','Valle dei Templi, Agrigento']},
+  {fecha:'22-08',dia:'Sáb',ciudad:'Catania',seccion:'Catania',checkin:'3pm',transport:'Tren + Bus matutino 13:15–17:30hs',actividades:'Mañana: Agrigento pendientes\nTarde: Piazza del Duomo, Fontana dell\'Elefante, Via Etnea, Piazza Università, Via Crociferi',pendiente:'Tren confirmado · Codice: 2877460334 y 2877460335',locked:true,places:['Piazza del Duomo, Catania','Via Etnea, Catania','Via Crociferi, Catania']},
+  {fecha:'23-08',dia:'Dom',ciudad:'Noto / Siracusa',seccion:'Catania',checkin:'-',transport:'2hs Catania→Noto · 35min Noto→Siracusa · 1:10hs Siracusa→Catania',actividades:'Ir a Noto primero: Porta Reale, Corso Vittorio Emanuele, Cattedrale di San Nicolò, Via Corrado Nicolaci\nDespués Siracusa/Ortigia: Tempio di Apollo, Piazza Archimede, Piazza Duomo, Fonte Aretusa, Castello Maniace',pendiente:'',locked:false,places:['Cattedrale di Noto','Via Corrado Nicolaci, Noto','Tempio di Apollo, Siracusa','Piazza Duomo, Ortigia, Siracusa','Fonte Aretusa, Siracusa']},
+  {fecha:'24-08',dia:'Lun',ciudad:'Etna / Catania',seccion:'Catania',checkin:'-',transport:'Confirmar tour y punto de encuentro',actividades:'Tour GetYourGuide Etna · Booking ref: GYG83XAK43M7\nTarde/Noche: descansar y comer tranqui',pendiente:'Tour Etna confirmado',locked:false,places:['Mount Etna, Sicily','Nicolosi, Catania']},
+  {fecha:'25-08',dia:'Mar',ciudad:'Taormina',seccion:'Catania',checkin:'-',transport:'Catania → Taormina (1hs)',actividades:'Mañana: Porta Messina, Corso Umberto, Piazza IX Aprile, Torre dell\'Orologio, Piazza Duomo\nAlmuerzo: Bam Bar\nTarde: Isola Bella\nTardecita: Teatro Antico (18:30hs) 🎂 Cumple de mamá!',pendiente:'Teatro Antico confirmado · #TOL-2026-00028033',locked:false,places:['Teatro Antico di Taormina','Piazza IX Aprile, Taormina','Isola Bella, Taormina','Bam Bar, Taormina']},
+  {fecha:'26-08',dia:'Mié',ciudad:'Catania',seccion:'Catania',checkin:'Tren nocturno',transport:'Tren nocturno 10:58pm → 6:42am · PNR WLSQE5 · Vagón 3, asientos 41 y 45',actividades:'Mañana: Mercado La Pescheria (ir a primera hora), Piazza Duomo, Fontana dell\'Amenano, Via Gisira\nTarde: Via Crociferi, Villa Cerami, Piazza Stesicoro\nTardecita: Shopping productos sicilianos (pistacho)\nNoche: cena y tren nocturno',pendiente:'Tren nocturno confirmado · PNR WLSQE5',locked:true,places:['Mercato della Pescheria, Catania','Piazza Stesicoro, Catania']},
+  {fecha:'27-08',dia:'Jue',ciudad:'Salerno + Vetri Sul Mare → Atrani',seccion:'Amalfi',checkin:'3pm–8pm',transport:'Ferry Salerno → Atrani · Horarios: 11:40 / 14:10 / 15:30 / 17:10',actividades:'Mañana: Bounce/Stasher para equipaje\nRecorrer Salerno: Lungomare Trieste, Centro histórico, Via Mercanti, Duomo di Salerno, Giardino della Minerva\nVietri Sul Mare: Corso Umberto I, cerámicas, Iglesia San Giovanni\nTarde: Ferry Salerno → Atrani · Check-in',pendiente:'Ferry Salerno-Amalfi · Reservar con anticipación',locked:true,places:['Duomo di Salerno','Vietri sul Mare','Atrani, Amalfi Coast']},
+  {fecha:'28-08',dia:'Vie',ciudad:'Amalfi / Atrani',seccion:'Amalfi',checkin:'-',transport:'A pie',actividades:'Mañana: Amalfi — Piazza Duomo, Duomo di Sant\'Andrea, Chiostro del Paradiso, Piazza dei Dogi, Via Lorenzo d\'Amalfi, Antico Arsenale\nTarde: playa en Amalfi + playa en Atrani',pendiente:'',locked:false,places:['Duomo di Amalfi','Chiostro del Paradiso, Amalfi','Atrani Beach','Antico Arsenale, Amalfi']},
+  {fecha:'29-08',dia:'Sáb',ciudad:'Minori / Maiori',seccion:'Amalfi',checkin:'-',transport:'Bus SITA o barco Atrani → Minori · Caminata Minori → Maiori · Bus/barco vuelta',actividades:'Mañana: Minori — centro, Basilica di Santa Trofimena, Villa Romana di Minori\nMediodía: Sentiero dei Limoni (caminata limones)\nTarde: Maiori — playa',pendiente:'',locked:false,places:['Basilica di Santa Trofimena, Minori','Villa Romana di Minori','Sentiero dei Limoni','Maiori Beach']},
+  {fecha:'30-08',dia:'Dom',ciudad:'Ravello / Amalfi',seccion:'Amalfi',checkin:'-',transport:'Bus SITA Atrani → Ravello',actividades:'Mañana: Ravello — Villa Rufolo, Villa Cimbrone, Terrazza dell\'Infinito',pendiente:'Villa Cimbrone: ver precios',locked:false,places:['Villa Rufolo, Ravello','Villa Cimbrone, Ravello','Terrazza dell\'Infinito, Ravello']},
+  {fecha:'31-08',dia:'Lun',ciudad:'Positano',seccion:'Positano',checkin:'3pm',transport:'Ferry Amalfi → Positano · Horarios: 08:50 / 09:20 / 10:30 / 11:30 / 12:00',actividades:'Mañana: viaje\nTarde: Check-in\nPositano: Marina Grande, Iglesia de Santa Maria Assunta, Piazza dei Mulini, Via dei Mulini, callecitas y miradores, Playa Fornillo',pendiente:'Ferry Amalfi→Positano · Reservar',locked:true,places:['Positano Beach','Chiesa di Santa Maria Assunta, Positano','Piazza dei Mulini, Positano','Spiaggia Fornillo, Positano']},
+  {fecha:'01-09',dia:'Mar',ciudad:'Capri',seccion:'Positano',checkin:'-',transport:'Ferry Positano → Capri + funicular',actividades:'Mañana: Marina Grande, Piazzetta, Via Camerelle, Jardines de Augusto, Via Krupp, miradores\nTarde: tour en barco alrededor de la isla',pendiente:'Ferry Positano↔Capri · Reservar',locked:false,places:['Piazzetta di Capri','Giardini di Augusto, Capri','Via Krupp, Capri','Marina Grande, Capri']},
+  {fecha:'02-09',dia:'Mié',ciudad:'Sorrento',seccion:'Positano',checkin:'-',transport:'Colectivo SITA',actividades:'Sorrento: Piazza Tasso, Vallone dei Mulini, Corso Italia, Via San Cesareo, Catedral, Villa Comunale\nTarde: Marina Grande, recorrer zona costera, shopping',pendiente:'',locked:false,places:['Piazza Tasso, Sorrento','Vallone dei Mulini, Sorrento','Marina Grande, Sorrento']},
+  {fecha:'03-09',dia:'Jue',ciudad:'Positano / Nocelle / Praiano',seccion:'Positano',checkin:'-',transport:'-',actividades:'Plan A: Caminata de los Dioses → Nocelle\nPlan B: Praiano — Marina di Praia, Chiesa di San Luca, miradores, Fiordo di Furore\nPlan C: Positano o repetir playa',pendiente:'',locked:false,places:['Sentiero degli Dei, Positano','Fiordo di Furore','Marina di Praia, Praiano']},
+  {fecha:'04-09',dia:'Vie',ciudad:'Roma',seccion:'Roma',checkin:'3pm',transport:'Barco Positano→Salerno 10:00–10:48hs · Tren Salerno→Roma 12:50–14:25hs',actividades:'Tarde: Villa Borghese, Terrazza del Pincio, Piazza del Popolo, Via del Babuino, Piazza di Spagna, Fontana di Trevi, Piazza Navona',pendiente:'Tren Salerno→Roma confirmado · Codice: 2884308446 y 2884308447',locked:true,places:['Fontana di Trevi, Roma','Piazza di Spagna, Roma','Pantheon, Roma','Piazza Navona, Roma']},
+  {fecha:'05-09',dia:'Sáb',ciudad:'Roma',seccion:'Roma',checkin:'-',transport:'-',actividades:'Mañana: Basílica de San Pedro, Paseo/Shopping en Prati (Via Cola di Rienzo, Piazza Cola di Rienzo, Via Ottaviano)\nTarde: Piazza del Popolo, Via del Corso, Piazza di Spagna',pendiente:'',locked:false,places:['Basilica di San Pietro, Roma','Piazza San Pietro, Roma','Prati, Roma','Via del Corso, Roma']},
+  {fecha:'06-09',dia:'Dom',ciudad:'Roma',seccion:'Roma',checkin:'-',transport:'-',actividades:'Mañana: Coliseo, Arco de Constantino, Via dei Fori Imperiali, Campidoglio, Monti, Santa Maria Maggiore\nTarde: barrio Celio y Trastevere, Isola Tiberina, Ponte Cestio, Santa Cecilia',pendiente:'',locked:false,places:['Colosseo, Roma','Foro Romano, Roma','Campidoglio, Roma','Trastevere, Roma','Isola Tiberina, Roma']},
+  {fecha:'07-09',dia:'Lun',ciudad:'Vuelo a Buenos Aires',seccion:'Vuelo',checkin:'22:30hs',transport:'ITA Airways · Duración 14hs · Llegada 07:30am (+1)',actividades:'Mañana: Últimas compras — Via del Corso, Via Frattina, Via del Babuino, Piazza di Spagna\nTarde: últimos pendientes\n17/18hs salir al aeropuerto\nNoche: vuelo de vuelta · Mochila + Carry On',pendiente:'',locked:true,places:['Via del Corso, Roma','Piazza di Spagna, Roma','Aeroporto di Roma Fiumicino']},
+];
+
+const CITIES = {
+  'Vuelo': null,
+  'Palermo': '#1A1A2E',
+  'Agrigento': '#1A1A2E',
+  'Catania': '#1A1A2E',
+  'Amalfi': '#1A1A2E',
+  'Positano': '#1A1A2E',
+  'Roma': '#1A1A2E',
 };
 
-const firebaseApp = initializeApp(firebaseConfig);
-const db = getDatabase(firebaseApp);
+// ── STATE ──
+let days = [];
+let currentIdx = 0;
+let swapFromIdx = null;
+let swapToIdx = null;
+let mapsLoaded = false;
+let dayMaps = {};
+let checkedDays = {};
 
-// ─── DEFAULT DATA ───
-const DEFAULT_ITINERARY = [
-  {section:'🏖️ Palermo',color:'#2A6E8A',days:[
-    {fecha:'15-08',dia:'Sáb',ciudad:'Buenos Aires → Roma → Palermo',checkin:null,notas:'ITA Airways · Salida 21:20hs · Llegada Roma 18:40hs → Palermo 22:30hs',transport:'Vuelo internacional',precio:'$222.36 USD',locked:true},
-    {fecha:'16-08',dia:'Dom',ciudad:'Palermo',checkin:'1pm',notas:'Centro Histórico · Teatro Massimo · Via Maqueda · Catedral · Palazzo dei Normanni · Mercato di Ballarò',transport:'',precio:'',locked:false},
-    {fecha:'17-08',dia:'Lun',ciudad:'Palermo / Mondello',checkin:null,notas:'Colectivo Línea 806, 30–40 min, €1.50–3 · Playa Mondello',transport:'Colectivo',precio:'€1.50–3',locked:false},
-    {fecha:'18-08',dia:'Mar',ciudad:'Palermo / Cefalù',checkin:null,notas:'Subir la Roca + playa + ciudad · Tren local (ver Omio)',transport:'Tren local',precio:'',locked:false},
-    {fecha:'19-08',dia:'Mié',ciudad:'Palermo / Porticello',checkin:null,notas:'Tren hasta Santa Flavia + caminar · Trekking Parco Monte Catalfano',transport:'Tren local',precio:'',locked:false},
-  ]},
-  {section:'🏛️ Agrigento',color:'#B8750A',days:[
-    {fecha:'20-08',dia:'Jue',ciudad:'Agrigento',checkin:'3pm',notas:'Check-in · Llegar + recorrer ciudad · Tarde: Stair of the Turks',transport:'Tren Palermo→Agrigento',precio:'~€13',pendiente:'Buscar opciones el 25/06 (obras)',locked:true},
-    {fecha:'21-08',dia:'Vie',ciudad:'Agrigento',checkin:null,notas:'Mañana: Punta Bianca · Tarde + atardecer: Valle dei Templi',transport:'',precio:'',locked:true},
-  ]},
-  {section:'🌋 Catania',color:'#C53030',days:[
-    {fecha:'22-08',dia:'Sáb',ciudad:'Catania',checkin:'3pm',notas:'Check-in · Recorrer Catania',transport:'Tren Agrigento→Catania',precio:'€9.48–14.30',pendiente:'Buscar opciones el 25/06 (obras)',locked:true},
-    {fecha:'23-08',dia:'Dom',ciudad:'Etna / Catania',checkin:null,notas:'Excursión Etna: cable car + 4x4 a 3340m',transport:'Tour organizado',precio:'',locked:false},
-    {fecha:'24-08',dia:'Lun',ciudad:'Noto / Siracusa',checkin:null,notas:'2hs Catania→Noto · 35min Noto→Siracusa · 1:10hs Siracusa→Catania',transport:'Tren/bus',precio:'',locked:false},
-    {fecha:'25-08',dia:'Mar',ciudad:'Taormina',checkin:null,notas:'1:22hs Catania→Taormina · Teatro Antico · ¡Cumple de mamá! 🎂',transport:'Tren local',precio:'',locked:false},
-    {fecha:'26-08',dia:'Mié',ciudad:'Catania → Salerno',checkin:'Tren nocturno',notas:'Recorrer Catania · Tren nocturno 10:58pm → 6:42am · PNR WLSQE5 · Vagón 3, asientos 41 y 45',transport:'Tren nocturno',precio:'€115 c/u ✓',locked:true},
-  ]},
-  {section:'⛵ Amalfi',color:'#2D7A5A',days:[
-    {fecha:'27-08',dia:'Jue',ciudad:'Salerno + Vetri Sul Mare → Amalfi',checkin:'3pm–8pm',notas:'Stasher para equipaje · Recorrer Salerno y Vetri Sul Mare · Barco a Amalfi · Check-in',transport:'Barco Salerno→Amalfi',pendiente:'Buscar barco con anticipación',locked:true},
-    {fecha:'28-08',dia:'Vie',ciudad:'Amalfi / Atrani',checkin:null,notas:'Explorar Amalfi y Atrani · Buscar playitas',transport:'A pie',locked:false},
-    {fecha:'29-08',dia:'Sáb',ciudad:'Minori / Maiori',checkin:null,notas:'Minori · Caminata de los limones · Maiori',transport:'Colectivo/barco',pendiente:'Buscar colectivo o barco',locked:false},
-    {fecha:'30-08',dia:'Dom',ciudad:'Ravello / Amalfi',checkin:null,notas:'Ravello: Villa Cimbrone · Festival de Música · Vuelta a Amalfi',transport:'Colectivos',locked:false},
-  ]},
-  {section:'🍋 Positano',color:'#C8602A',days:[
-    {fecha:'31-08',dia:'Lun',ciudad:'Positano',checkin:'3pm',notas:'Barco AM desde Amalfi · Check-in · Recorrer ciudad + playa',transport:'Barco Amalfi→Positano',pendiente:'Buscar barco AM',locked:true},
-    {fecha:'01-09',dia:'Mar',ciudad:'Capri',checkin:null,notas:'Barco Positano→Capri → vuelta a la isla → Positano',transport:'Ferry Positano↔Capri',pendiente:'Sacar con 1 mes de anticipación',locked:false},
-    {fecha:'02-09',dia:'Mié',ciudad:'Praiano + Fiordo de Furore',checkin:null,notas:'Colectivos SITA · Praiano + Fiordo de Furore',transport:'Colectivos SITA',locked:false},
-    {fecha:'03-09',dia:'Jue',ciudad:'Sorrento',checkin:null,notas:'Caminata de los Dioses → Nocelle',transport:'',locked:false},
-  ]},
-  {section:'🏟️ Roma',color:'#534AB7',days:[
-    {fecha:'04-09',dia:'Vie',ciudad:'Roma',checkin:'3pm',notas:'Viaje matutino: barco Positano→Salerno + tren a Roma · Check-in',transport:'Barco + tren',pendiente:'Tren Salerno→Roma no disponible, buscar el 25/06',locked:true},
-    {fecha:'05-09',dia:'Sáb',ciudad:'Roma',checkin:null,notas:'Día libre en Roma',locked:false},
-    {fecha:'06-09',dia:'Dom',ciudad:'Roma',checkin:null,notas:'Día libre en Roma',locked:false},
-    {fecha:'07-09',dia:'Lun',ciudad:'Vuelo a Buenos Aires',checkin:'22:30hs',notas:'ITA Airways · Duración 14hs · Llegada 7:30am (+1) · Mochila + Carry On',transport:'Vuelo internacional',locked:true},
-  ]},
-];
-
-const DEFAULT_EXPENSES = [
-  {empresa:'Airbnb',desc:'Palermo 15–20 ago (5 noches)',total:546.55,cu:273.275,cat:'Alojamiento',ciudad:'Palermo',estado:true,pago:'Ber',notas:'https://www.airbnb.com.ar/trips/v1/reservation-details/ro/RESERVATION2_CHECKIN/HMNXYZ9FTJ'},
-  {empresa:'Airbnb',desc:'Agrigento 20–22 ago (2 noches)',total:199.16,cu:99.58,cat:'Alojamiento',ciudad:'Agrigento',estado:true,pago:'Ber',notas:'https://www.airbnb.com.ar/trips/v1/reservation-details/ro/RESERVATION2_CHECKIN/HMBNHSNSZF'},
-  {empresa:'Airbnb',desc:'Catania 22–26 ago (4 noches)',total:499.68,cu:249.84,cat:'Alojamiento',ciudad:'Catania',estado:true,pago:'Ber',notas:'https://www.airbnb.com.ar/trips/v1/reservation-details/ro/RESERVATION2_CHECKIN/HMMY5NYXHQ'},
-  {empresa:'Airbnb',desc:'Amalfi 27–31 ago (4 noches)',total:988.6,cu:494.3,cat:'Alojamiento',ciudad:'Amalfi',estado:false,pago:'Ber',notas:''},
-  {empresa:'Airbnb',desc:'Positano 31 ago–4 sep (4 noches)',total:1877,cu:938.5,cat:'Alojamiento',ciudad:'Positano',estado:false,pago:'Ber',notas:''},
-  {empresa:'Airbnb',desc:'Roma 4–7 sep (3 noches)',total:1100,cu:550,cat:'Alojamiento',ciudad:'Roma',estado:false,pago:'Ber',notas:''},
-  {empresa:'ITA Airways',desc:'Roma → Palermo',total:222.36,cu:111.18,cat:'Pasajes',ciudad:'General',estado:true,pago:'Ber',notas:'Código ZGD9H5'},
-  {empresa:'Tren',desc:'Catania → Salerno (nocturno)',total:278.15,cu:139.075,cat:'Pasajes',ciudad:'General',estado:true,pago:'Ber',notas:'PNR WLSQE5 · Vagón 3, asientos 41 y 45'},
-  {empresa:'Tren',desc:'Palermo → Agrigento',total:0,cu:0,cat:'Pasajes',ciudad:'General',estado:false,pago:'',notas:'Obras — buscar el 25/06'},
-  {empresa:'Tren',desc:'Agrigento → Catania',total:0,cu:0,cat:'Pasajes',ciudad:'General',estado:false,pago:'',notas:'Obras — buscar el 25/06'},
-  {empresa:'Ferry',desc:'Salerno → Amalfi',total:0,cu:0,cat:'Pasajes',ciudad:'General',estado:false,pago:'',notas:'Sacar con 1 mes de anticipación'},
-  {empresa:'Ferry',desc:'Amalfi → Positano',total:0,cu:0,cat:'Pasajes',ciudad:'General',estado:false,pago:'',notas:'Sacar con 1 mes de anticipación'},
-  {empresa:'Ferry',desc:'Positano ↔ Capri',total:0,cu:0,cat:'Pasajes',ciudad:'Positano',estado:false,pago:'',notas:'Sacar con 1 mes de anticipación'},
-  {empresa:'Ferry',desc:'Positano → Salerno',total:0,cu:0,cat:'Pasajes',ciudad:'Positano',estado:false,pago:'',notas:'Sacar con 1 mes de anticipación'},
-  {empresa:'Tren',desc:'Salerno → Roma',total:0,cu:0,cat:'Pasajes',ciudad:'General',estado:false,pago:'',notas:'No disponible aún — buscar el 25/06'},
-];
-
-const DEFAULT_TICKETS = [
-  {nombre:'Vuelo BUE → Roma → Palermo',tipo:'✈️',fecha:'15/08/26',detalles:'ITA Airways · Salida 21:20hs · Roma 18:40hs → Palermo 22:30hs',link:'',estado:'confirmado'},
-  {nombre:'Vuelo Roma → BUE',tipo:'✈️',fecha:'07/09/26',detalles:'ITA Airways · 22:30hs · 14hs de vuelo · Llegada 7:30am (+1)',link:'',estado:'confirmado'},
-  {nombre:'Airbnb Palermo',tipo:'🏠',fecha:'15/08/26',detalles:'15–20 ago · 5 noches',link:'https://www.airbnb.com.ar/trips/v1/reservation-details/ro/RESERVATION2_CHECKIN/HMNXYZ9FTJ',estado:'confirmado'},
-  {nombre:'Airbnb Agrigento',tipo:'🏠',fecha:'20/08/26',detalles:'20–22 ago · 2 noches',link:'https://www.airbnb.com.ar/trips/v1/reservation-details/ro/RESERVATION2_CHECKIN/HMBNHSNSZF',estado:'confirmado'},
-  {nombre:'Airbnb Catania',tipo:'🏠',fecha:'22/08/26',detalles:'22–26 ago · 4 noches',link:'https://www.airbnb.com.ar/trips/v1/reservation-details/ro/RESERVATION2_CHECKIN/HMMY5NYXHQ',estado:'confirmado'},
-  {nombre:'Airbnb Amalfi',tipo:'🏠',fecha:'27/08/26',detalles:'27–31 ago · 4 noches',link:'',estado:'pendiente'},
-  {nombre:'Airbnb Positano',tipo:'🏠',fecha:'31/08/26',detalles:'31 ago–4 sep · 4 noches',link:'',estado:'pendiente'},
-  {nombre:'Airbnb Roma',tipo:'🏠',fecha:'04/09/26',detalles:'4–7 sep · 3 noches',link:'',estado:'pendiente'},
-  {nombre:'Tren Catania → Salerno',tipo:'🚂',fecha:'26/08/26',detalles:'Nocturno 10:58pm–6:42am · PNR WLSQE5 · Vagón 3, asientos 41 y 45',link:'',estado:'confirmado'},
-  {nombre:'Palermo → Agrigento',tipo:'🚂',fecha:'20/08/26',detalles:'Obras — buscar opciones el 25/06',link:'',estado:'pendiente'},
-  {nombre:'Agrigento → Catania',tipo:'🚂',fecha:'22/08/26',detalles:'Obras — buscar opciones el 25/06',link:'',estado:'pendiente'},
-  {nombre:'Ferry Salerno → Amalfi',tipo:'⛵',fecha:'27/08/26',detalles:'Sacar con 1 mes de anticipación',link:'',estado:'pendiente'},
-  {nombre:'Ferry Amalfi → Positano',tipo:'⛵',fecha:'31/08/26',detalles:'Sacar con 1 mes de anticipación',link:'',estado:'pendiente'},
-  {nombre:'Ferry Positano ↔ Capri',tipo:'⛵',fecha:'01/09/26',detalles:'Ida y vuelta en el día · Sacar con 1 mes de anticipación',link:'',estado:'pendiente'},
-  {nombre:'Salerno → Roma',tipo:'🚂',fecha:'04/09/26',detalles:'No disponible aún — buscar el 25/06',link:'',estado:'pendiente'},
-];
-
-const DEFAULT_ACTIVITIES = [
-  {ciudad:'Palermo',nombre:'Palazzo dei Normanni + Capilla Palatina',precio:'',link:'',done:false},
-  {ciudad:'Palermo',nombre:'Teatro Massimo',precio:'',link:'',done:false},
-  {ciudad:'Palermo',nombre:'Catacumbas de los Capuchinos',precio:'',link:'',done:false},
-  {ciudad:'Palermo',nombre:'Mercato di Ballarò',precio:'Libre',link:'',done:false},
-  {ciudad:'Palermo',nombre:'Playa Mondello',precio:'Libre',link:'',done:false},
-  {ciudad:'Palermo',nombre:'Cefalù — subir la Roca + playa + ciudad',precio:'',link:'',done:false},
-  {ciudad:'Palermo',nombre:'Porticello — Trekking + playa',precio:'',link:'',done:false},
-  {ciudad:'Agrigento',nombre:'Stair of the Turks',precio:'',link:'',done:false},
-  {ciudad:'Agrigento',nombre:'Punta Bianca',precio:'',link:'',done:false},
-  {ciudad:'Agrigento',nombre:'Valle dei Templi',precio:'',link:'',done:false},
-  {ciudad:'Catania',nombre:'Volcán Etna — cable car + 4x4 a 3340m',precio:'Ver precio',link:'https://www.getyourguide.com/en-gb/nicolosi-l115237/etna-excursion-from-catania-with-cable-car-4x4-to-3340-mt-t454024',done:false},
-  {ciudad:'Catania',nombre:'Noto + Siracusa (día completo)',precio:'',link:'',done:false},
-  {ciudad:'Siracusa',nombre:'Parque Arqueológico Neapolis',precio:'',link:'',done:false},
-  {ciudad:'Taormina',nombre:'Teatro Antico di Taormina',precio:'',link:'',done:false},
-  {ciudad:'Amalfi',nombre:'Vetri Sul Mare',precio:'',link:'',done:false},
-  {ciudad:'Amalfi',nombre:'Atrani',precio:'',link:'',done:false},
-  {ciudad:'Amalfi',nombre:'Caminata limones Minori → Maiori',precio:'',link:'',done:false},
-  {ciudad:'Amalfi',nombre:'Ravello — Villa Cimbrone',precio:'',link:'',done:false},
-  {ciudad:'Amalfi',nombre:'Festival de Música Ravello (ver eventos)',precio:'',link:'',done:false},
-  {ciudad:'Positano',nombre:'Capri — vuelta a la isla en barco',precio:'',link:'',done:false},
-  {ciudad:'Positano',nombre:'Praiano + Fiordo de Furore',precio:'',link:'',done:false},
-  {ciudad:'Positano',nombre:'Caminata de los Dioses → Nocelle',precio:'',link:'',done:false},
-  {ciudad:'Positano',nombre:'Sorrento',precio:'',link:'',done:false},
-];
-
-const PLACES = [
-  {name:'Palermo',region:'Sicilia',dates:'15–20 ago',noches:5,emoji:'🏖️',lat:38.1157,lng:13.3615,color:'#2A6E8A'},
-  {name:'Agrigento',region:'Sicilia Sur',dates:'20–22 ago',noches:2,emoji:'🏛️',lat:37.3111,lng:13.5765,color:'#B8750A'},
-  {name:'Catania',region:'Sicilia Este',dates:'22–26 ago',noches:4,emoji:'🌋',lat:37.5079,lng:15.0830,color:'#C53030'},
-  {name:'Amalfi',region:'Campania',dates:'27–31 ago',noches:4,emoji:'⛵',lat:40.6340,lng:14.6027,color:'#2D7A5A'},
-  {name:'Positano',region:'Campania',dates:'31 ago–4 sep',noches:4,emoji:'🍋',lat:40.6281,lng:14.4850,color:'#C8602A'},
-  {name:'Roma',region:'Lacio',dates:'4–7 sep',noches:3,emoji:'🏟️',lat:41.9028,lng:12.4964,color:'#534AB7'},
-];
-
-const CAT_COLORS = {Alojamiento:'#2D7A5A',Pasajes:'#2A6E8A',Transporte:'#7F77DD',Actividades:'#C8602A',Comida:'#B8750A',Otro:'#888780'};
-
-// ─── FIREBASE STATE ───
-let itin = [], expenses = [], tickets = [], activities = [], budget = 8000, checkedDays = {};
-let dragSrc = null;
-
-function setSyncStatus(ok) {
-  const dot = document.getElementById('sync-dot');
-  const lbl = document.getElementById('sync-label');
-  dot.className = 'sync-dot ' + (ok ? 'ok' : 'err');
-  lbl.textContent = ok ? 'sincronizado' : 'sin conexión';
+// ── FIREBASE ──
+async function fbGet(path) {
+  const r = await fetch(`${FIREBASE_URL}/${path}.json`);
+  return r.json();
+}
+async function fbSet(path, data) {
+  await fetch(`${FIREBASE_URL}/${path}.json`, {method:'PUT', body:JSON.stringify(data)});
+}
+async function fbUpdate(path, data) {
+  await fetch(`${FIREBASE_URL}/${path}.json`, {method:'PATCH', body:JSON.stringify(data)});
 }
 
-// ─── SEED DEFAULT DATA if empty ───
+function setSyncStatus(ok) {
+  document.getElementById('sync-dot').className = 'sync-dot '+(ok?'ok':'err');
+  document.getElementById('sync-label').textContent = ok ? 'sync' : 'offline';
+}
+
+// Firebase long-polling for real-time sync
+function startSync() {
+  const evtSource = new EventSource(`${FIREBASE_URL}/italia.json?accept=text/event-stream`);
+  evtSource.addEventListener('put', e => {
+    const data = JSON.parse(e.data);
+    if (data.data) {
+      if (data.data.days) { days = data.data.days; renderAllCards(); }
+      if (data.data.checkedDays) { checkedDays = data.data.checkedDays; updateCheckedUI(); }
+    }
+    setSyncStatus(true);
+  });
+  evtSource.onerror = () => setSyncStatus(false);
+}
+
 async function seedIfEmpty() {
-  const snap = await get(ref(db, 'itinerary'));
-  if (!snap.exists()) {
-    await set(ref(db, 'itinerary'), DEFAULT_ITINERARY);
-    await set(ref(db, 'budget'), 8000);
-    const expObj = {};
-    DEFAULT_EXPENSES.forEach((e,i) => expObj['e'+i] = e);
-    await set(ref(db, 'expenses'), expObj);
-    const tickObj = {};
-    DEFAULT_TICKETS.forEach((t,i) => tickObj['t'+i] = t);
-    await set(ref(db, 'tickets'), tickObj);
-    const actObj = {};
-    DEFAULT_ACTIVITIES.forEach((a,i) => actObj['a'+i] = a);
-    await set(ref(db, 'activities'), actObj);
+  const existing = await fbGet('italia/days');
+  if (!existing) {
+    await fbSet('italia/days', DEFAULT_DAYS);
+    await fbSet('italia/checkedDays', {});
+  }
+  const cd = await fbGet('italia/checkedDays');
+  checkedDays = cd || {};
+}
+
+// ── TODAY ──
+function getTodayIdx() {
+  const today = new Date();
+  const start = new Date(2026, 7, 15); // Aug 15
+  const diff = Math.floor((today - start) / 86400000);
+  if (diff < 0 || diff >= days.length) return 0;
+  return diff;
+}
+
+// ── RENDER ──
+function renderNav() {
+  const nav = document.getElementById('carousel-nav');
+  const todayIdx = getTodayIdx();
+  nav.innerHTML = days.map((d, i) => {
+    const isToday = i === todayIdx;
+    const isActive = i === currentIdx;
+    return `<button class="day-pill ${isActive?'active':''} ${isToday&&!isActive?'today':''}"
+      onclick="goToDay(${i})" aria-label="${d.fecha}">
+      ${d.fecha}
+    </button>`;
+  }).join('');
+  // Scroll active pill into view
+  const pills = nav.querySelectorAll('.day-pill');
+  if (pills[currentIdx]) {
+    pills[currentIdx].scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
   }
 }
 
-// ─── LISTENERS ───
-function initListeners() {
-  onValue(ref(db, 'itinerary'), snap => {
-    itin = snap.exists() ? snap.val() : DEFAULT_ITINERARY;
-    renderItinerario();
-    setSyncStatus(true);
-  }, () => setSyncStatus(false));
-
-  onValue(ref(db, 'expenses'), snap => {
-    expenses = snap.exists() ? Object.entries(snap.val()).map(([k,v]) => ({...v, _key:k})) : [];
-    expenses.sort((a,b) => (a._order||0)-(b._order||0));
-    renderExpenses();
-  });
-
-  onValue(ref(db, 'tickets'), snap => {
-    tickets = snap.exists() ? Object.entries(snap.val()).map(([k,v]) => ({...v, _key:k})) : [];
-    renderTickets();
-  });
-
-  onValue(ref(db, 'activities'), snap => {
-    activities = snap.exists() ? Object.entries(snap.val()).map(([k,v]) => ({...v, _key:k})) : [];
-    renderActividades();
-  });
-
-  onValue(ref(db, 'budget'), snap => {
-    if (snap.exists()) {
-      budget = snap.val();
-      document.getElementById('budget-input').value = budget;
-      renderExpenses();
-    }
-  });
-
-  onValue(ref(db, 'checkedDays'), snap => {
-    checkedDays = snap.exists() ? snap.val() : {};
-    renderItinerario();
-  });
+function renderAllCards() {
+  const track = document.getElementById('swipe-track');
+  track.innerHTML = days.map((d, i) => renderDayCard(d, i)).join('');
+  updateSwipePosition(false);
+  renderNav();
 }
 
-// ─── NAVIGATION ───
-window.showPage = function(id, btn) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  if (btn) btn.classList.add('active');
-  document.getElementById('fab-gastos').style.display = id==='gastos' ? 'flex' : 'none';
-  document.getElementById('fab-tickets').style.display = id==='tickets' ? 'flex' : 'none';
-  if (id === 'mapa') setTimeout(initMap, 100);
-};
+function renderDayCard(d, i) {
+  const todayIdx = getTodayIdx();
+  const isToday = i === todayIdx;
+  const isDone = checkedDays && checkedDays[i];
+  const [day, month] = d.fecha.split('-');
+  const months = ['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const monthName = months[parseInt(month)] || '';
 
-// ─── ITINERARIO ───
-function renderItinerario() {
-  const cont = document.getElementById('itinerario-content');
-  if (!itin.length) { cont.innerHTML = '<div class="empty">Sin datos</div>'; return; }
-  cont.innerHTML = itin.map((sec, si) => {
-    const draggable = sec.days && sec.days.filter(d=>!d.locked).length > 1;
-    return `<div class="city-block">
-      <div class="city-hdr" style="background:${sec.color}">
-        <span class="city-hdr-name">${sec.section}</span>
-        ${draggable ? '<span class="drag-hint">⠿ arrastrá para reordenar</span>' : ''}
-        <span class="city-hdr-meta">${sec.days ? sec.days.length : 0} días</span>
+  const activities = (d.actividades||'').split('\n').filter(a=>a.trim());
+  const hasTransport = d.transport && d.transport !== '-' && d.transport !== '';
+  const hasPendiente = d.pendiente && d.pendiente.trim();
+
+  // Build places list for map
+  const places = d.places || [];
+
+  // Swap button only for non-locked days with siblings in same section
+  const siblings = days.filter((dd,ii) => dd.seccion === d.seccion && !dd.locked && ii !== i);
+  const showSwap = !d.locked && siblings.length > 0;
+
+  return `<div class="day-card" id="card-${i}">
+    <div class="day-hero">
+      <div class="day-hero-top">
+        <div>
+          <div class="day-label">${d.seccion}${isToday?`<span class="today-badge">Hoy</span>`:''}</div>
+          <div class="day-title">${d.ciudad}</div>
+        </div>
+        <div class="day-date-badge">
+          <div class="badge-day">${day}</div>
+          <div class="badge-month">${monthName}</div>
+        </div>
       </div>
-      ${(sec.days||[]).map((day, di) => renderDay(day, si, di)).join('')}
-    </div>`;
-  }).join('');
-}
+      <div class="day-hero-meta">
+        <div class="day-weekday" style="font-size:14px;font-weight:500;color:var(--gray-500);align-self:center">${d.dia}</div>
+        ${d.checkin && d.checkin!=='-' ? `<span class="meta-chip"><span class="chip-icon">🏠</span> Check-in ${d.checkin}</span>` : ''}
+      </div>
+      <button class="done-btn-hero ${isDone?'done':''}" onclick="toggleDone(${i})">${isDone?'✓ Listo':'Marcar listo'}</button>
+    </div>
 
-function renderDay(day, si, di) {
-  const done = checkedDays && checkedDays[si+'_'+di];
-  return `<div class="day-row ${day.locked?'locked':''}"
-    data-si="${si}" data-di="${di}"
-    style="${done?'opacity:0.5':''}"
-    ${!day.locked ? `draggable="true"
-      ondragstart="onDS(event,${si},${di})"
-      ondragover="onDO(event,${si},${di})"
-      ondrop="onDD(event,${si},${di})"
-      ondragleave="onDL(event)"` : ''}>
-    <div class="day-handle"><span></span><span></span><span></span></div>
-    <div class="day-meta">
-      <span class="day-date">${day.fecha}</span>
-      <span class="day-weekday">${day.dia}</span>
-    </div>
-    <div class="day-body">
-      <div class="day-city">${day.ciudad||''}</div>
-      ${day.checkin ? `<div class="day-checkin">📍 ${day.checkin}</div>` : ''}
-      ${day.notas ? `<div class="day-notes">${day.notas}</div>` : ''}
-      ${day.transport ? `<div class="day-transport">🚌 ${day.transport}${day.precio?' · '+day.precio:''}</div>` : ''}
-      ${day.pendiente ? `<div class="day-pending">⚠️ ${day.pendiente}</div>` : ''}
-    </div>
-    <div class="day-actions">
-      <button class="icon-btn" onclick="openDayModal(${si},${di})">✏️</button>
-      <button class="done-chip ${done?'done':''}" onclick="toggleDay(${si},${di})">${done?'✓':'ok'}</button>
+    ${hasTransport ? `<div class="day-section">
+      <div class="section-label">Transporte</div>
+      <div class="transport-card">
+        <span class="transport-icon">${getTransportIcon(d.transport)}</span>
+        <div class="transport-text">${d.transport}</div>
+      </div>
+    </div>` : ''}
+
+    ${activities.length ? `<div class="day-section">
+      <div class="section-label">Plan del día</div>
+      <div class="activity-list">
+        ${activities.map(a => `<div class="activity-item">
+          <div class="activity-dot"></div>
+          <div class="activity-text">${a}</div>
+        </div>`).join('')}
+      </div>
+    </div>` : ''}
+
+    ${hasPendiente ? `<div class="day-section">
+      <div class="section-label">📌 Recordar</div>
+      <div style="font-size:13px;color:var(--gray-700);background:var(--gray-100);padding:12px 14px;border-radius:12px;line-height:1.5">${d.pendiente}</div>
+    </div>` : ''}
+
+    ${places.length ? `<div class="map-section">
+      <div class="section-label">Mapa del día</div>
+      <div id="day-map-container-${i}">
+        <div class="day-map" id="map-${i}">
+          <div class="map-loading" id="map-loading-${i}">Cargando mapa...</div>
+        </div>
+        <div class="map-places">
+          ${places.map((p,pi) => `<div class="map-place-item">
+            <div class="map-place-num">${pi+1}</div>
+            <div class="map-place-name">${p.split(',')[0]}</div>
+          </div>`).join('')}
+        </div>
+        <a class="open-maps-btn" href="https://www.google.com/maps/search/${encodeURIComponent(places[0])}" target="_blank">
+          📍 Abrir en Google Maps
+        </a>
+      </div>
+    </div>` : ''}
+
+    <div class="swap-section">
+      ${showSwap ? `<button class="swap-btn" onclick="openSwap(${i})">⇄ Intercambiar con otro día</button>` : ''}
+      <button class="edit-btn-section" onclick="openEdit(${i})">✏️ Editar este día</button>
     </div>
   </div>`;
 }
 
-window.onDS = function(e, si, di) {
-  dragSrc = {si, di};
-  e.dataTransfer.effectAllowed = 'move';
-  setTimeout(() => e.target.classList.add('dragging'), 0);
-};
-window.onDO = function(e, si, di) {
-  e.preventDefault();
-  if (!dragSrc || dragSrc.si !== si) return;
-  if (itin[si].days[di].locked) return;
-  e.currentTarget.classList.add('drag-over');
-};
-window.onDL = function(e) { e.currentTarget.classList.remove('drag-over'); };
-window.onDD = function(e, si, di) {
-  e.preventDefault();
-  e.currentTarget.classList.remove('drag-over');
-  if (!dragSrc || dragSrc.si !== si || dragSrc.di === di) { dragSrc=null; return; }
-  if (itin[si].days[di].locked || itin[si].days[dragSrc.di].locked) { dragSrc=null; return; }
-  const fields = ['ciudad','checkin','notas','transport','precio','pendiente'];
-  const from = itin[si].days[dragSrc.di], to = itin[si].days[di];
-  fields.forEach(f => { const tmp=from[f]; from[f]=to[f]; to[f]=tmp; });
-  dragSrc = null;
-  set(ref(db, 'itinerary'), itin);
-  showToast('Días intercambiados ✓');
-};
-
-window.toggleDay = function(si, di) {
-  const k = si+'_'+di;
-  const newVal = !(checkedDays && checkedDays[k]);
-  set(ref(db, `checkedDays/${k}`), newVal);
-};
-
-window.openDayModal = function(si, di) {
-  const d = itin[si].days[di];
-  document.getElementById('d-si').value = si;
-  document.getElementById('d-di').value = di;
-  document.getElementById('d-ciudad').value = d.ciudad||'';
-  document.getElementById('d-checkin').value = d.checkin||'';
-  document.getElementById('d-transport').value = d.transport||'';
-  document.getElementById('d-precio').value = d.precio||'';
-  document.getElementById('d-notas').value = d.notas||'';
-  document.getElementById('d-pendiente').value = d.pendiente||'';
-  openModal('modal-day');
-};
-window.saveDay = function() {
-  const si = +document.getElementById('d-si').value;
-  const di = +document.getElementById('d-di').value;
-  const d = itin[si].days[di];
-  d.ciudad = document.getElementById('d-ciudad').value;
-  d.checkin = document.getElementById('d-checkin').value||null;
-  d.transport = document.getElementById('d-transport').value;
-  d.precio = document.getElementById('d-precio').value;
-  d.notas = document.getElementById('d-notas').value;
-  d.pendiente = document.getElementById('d-pendiente').value||null;
-  set(ref(db, 'itinerary'), itin);
-  closeModal('modal-day');
-  showToast('Día actualizado ✓');
-};
-
-// ─── EXPENSES ───
-window.saveBudget = function() {
-  const v = parseFloat(document.getElementById('budget-input').value)||8000;
-  set(ref(db,'budget'), v);
-};
-window.calcCu = function() {
-  const v = parseFloat(document.getElementById('e-total').value)||0;
-  document.getElementById('e-cu').value = v ? (v/2).toFixed(2) : '';
-};
-
-function renderExpenses() {
-  const list = document.getElementById('expense-list');
-  const bud = parseFloat(document.getElementById('budget-input').value)||budget;
-  const paid = expenses.filter(e=>e.estado&&e.total).reduce((s,e)=>s+e.total,0);
-  const pend = expenses.filter(e=>!e.estado&&e.total).reduce((s,e)=>s+e.total,0);
-  const pct = Math.min(100, Math.round(paid/bud*100));
-
-  document.getElementById('gastos-stats').innerHTML = `
-    <div class="stat-card"><div class="stat-label">Confirmado</div><div class="stat-val" style="color:var(--green)">$${paid.toLocaleString('es-AR',{maximumFractionDigits:0})}</div><div class="stat-sub">USD pagado</div></div>
-    <div class="stat-card"><div class="stat-label">Pendiente</div><div class="stat-val" style="color:var(--amber)">$${pend.toLocaleString('es-AR',{maximumFractionDigits:0})}</div><div class="stat-sub">USD por pagar</div></div>
-    <div class="stat-card"><div class="stat-label">Total estimado</div><div class="stat-val">$${(paid+pend).toLocaleString('es-AR',{maximumFractionDigits:0})}</div><div class="stat-sub">USD total</div></div>
-    <div class="stat-card"><div class="stat-label">Por persona</div><div class="stat-val">$${Math.round((paid+pend)/2).toLocaleString('es-AR')}</div><div class="stat-sub">USD c/u</div></div>`;
-
-  const fill = document.getElementById('prog-fill');
-  fill.style.width = pct+'%';
-  fill.className = 'prog-fill'+(pct>90?' over':pct>70?' warn':'');
-  document.getElementById('prog-label').textContent = `$${paid.toLocaleString('es-AR',{maximumFractionDigits:0})} confirmado de $${bud.toLocaleString('es-AR')}`;
-  document.getElementById('prog-pct').textContent = pct+'%';
-
-  const cats = {};
-  expenses.forEach(e=>{ if(e.total) cats[e.cat]=(cats[e.cat]||0)+e.total; });
-  const maxC = Math.max(...Object.values(cats),1);
-  document.getElementById('cat-bars').innerHTML = Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,a])=>`
-    <div class="cat-bar-row">
-      <span class="cat-bar-label">${c}</span>
-      <div class="cat-bar-bg"><div class="cat-bar-fill" style="width:${Math.round(a/maxC*100)}%;background:${CAT_COLORS[c]||'#888'}"></div></div>
-      <span class="cat-bar-amt">$${a.toLocaleString('es-AR',{maximumFractionDigits:0})}</span>
-    </div>`).join('');
-
-  if (!expenses.length) { list.innerHTML='<div class="empty">Sin gastos aún. Tap + para agregar.</div>'; return; }
-  list.innerHTML = expenses.map(e=>`
-    <div class="expense-item">
-      <div class="cat-dot" style="background:${CAT_COLORS[e.cat]||'#888'}"></div>
-      <div class="expense-body">
-        <div class="expense-name">${e.desc}</div>
-        <div class="expense-sub">${e.empresa}${e.ciudad&&e.ciudad!=='General'?' · '+e.ciudad:''}</div>
-      </div>
-      <div class="expense-right">
-        <div class="expense-amt">${e.total?'$'+e.total.toLocaleString('es-AR',{maximumFractionDigits:0}):'-'}</div>
-        <span class="badge ${e.estado?'badge-green':'badge-amber'}">${e.estado?'Pagado':'Pend.'}</span>
-      </div>
-      <button class="icon-btn" onclick="openExpenseModal('${e._key}')" style="margin-left:6px">✏️</button>
-    </div>`).join('');
+function getTransportIcon(t) {
+  if (!t) return '🚌';
+  const tl = t.toLowerCase();
+  if (tl.includes('avion') || tl.includes('ita') || tl.includes('vuelo')) return '✈️';
+  if (tl.includes('tren') || tl.includes('trenitalia')) return '🚂';
+  if (tl.includes('ferry') || tl.includes('barco') || tl.includes('barca')) return '⛵';
+  if (tl.includes('colectivo') || tl.includes('bus') || tl.includes('sita')) return '🚌';
+  if (tl.includes('taxi')) return '🚕';
+  return '🚌';
 }
 
-window.openExpenseModal = function(key) {
-  const modal = document.getElementById('modal-expense');
-  if (key) {
-    const e = expenses.find(x=>x._key===key);
-    document.getElementById('expense-modal-title').textContent = 'Editar gasto';
-    document.getElementById('e-id').value = key;
-    document.getElementById('e-desc').value = e.desc||'';
-    document.getElementById('e-empresa').value = e.empresa||'';
-    document.getElementById('e-total').value = e.total||'';
-    document.getElementById('e-cu').value = e.cu||'';
-    document.getElementById('e-cat').value = e.cat||'Otro';
-    document.getElementById('e-ciudad').value = e.ciudad||'General';
-    document.getElementById('e-estado').value = String(e.estado);
-    document.getElementById('e-pago').value = e.pago||'Ber';
-    document.getElementById('e-notas').value = e.notas||'';
-  } else {
-    document.getElementById('expense-modal-title').textContent = 'Nuevo gasto';
-    document.getElementById('e-id').value = '';
-    ['e-desc','e-empresa','e-notas'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('e-total').value=''; document.getElementById('e-cu').value='';
-    document.getElementById('e-estado').value='false';
-  }
-  openModal('modal-expense');
-};
-window.saveExpense = function() {
-  const desc = document.getElementById('e-desc').value.trim();
-  if (!desc) return;
-  const total = parseFloat(document.getElementById('e-total').value)||0;
-  const data = {
-    empresa:document.getElementById('e-empresa').value||'',
-    desc, total, cu:total/2,
-    cat:document.getElementById('e-cat').value,
-    ciudad:document.getElementById('e-ciudad').value,
-    estado:document.getElementById('e-estado').value==='true',
-    pago:document.getElementById('e-pago').value,
-    notas:document.getElementById('e-notas').value||''
-  };
-  const key = document.getElementById('e-id').value;
-  if (key) {
-    update(ref(db,'expenses/'+key), data);
-  } else {
-    push(ref(db,'expenses'), data);
-  }
-  closeModal('modal-expense');
-  showToast('Gasto guardado ✓');
-};
-
-// ─── TICKETS ───
-function renderTickets() {
-  const cont = document.getElementById('tickets-list');
-  const sections = {
-    '✈️ Vuelos': tickets.filter(t=>t.tipo==='✈️'),
-    '🏠 Alojamiento': tickets.filter(t=>t.tipo==='🏠'),
-    '🚂 Trenes': tickets.filter(t=>t.tipo==='🚂'),
-    '⛵ Ferrys y barcos': tickets.filter(t=>t.tipo==='⛵'),
-    '🎟️ Otros': tickets.filter(t=>!['✈️','🏠','🚂','⛵'].includes(t.tipo)),
-  };
-  let html = '';
-  for (const [sec, items] of Object.entries(sections)) {
-    if (!items.length) continue;
-    html += `<div class="list-section-hdr">${sec}</div>`;
-    html += items.map(t=>`
-      <div class="ticket-item">
-        <div class="ticket-icon">${t.tipo}</div>
-        <div class="ticket-body">
-          <div class="ticket-name">${t.nombre}</div>
-          <div class="ticket-meta">${t.fecha?t.fecha+' · ':''}${t.detalles||''}</div>
-          ${t.link?`<a href="${t.link}" class="ticket-link" target="_blank">Ver reserva →</a>`:''}
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">
-          <span class="badge ${t.estado==='confirmado'?'badge-green':'badge-amber'}">${t.estado==='confirmado'?'✓ Conf.':'Pend.'}</span>
-          <button class="icon-btn" onclick="openTicketModal('${t._key}')">✏️</button>
-        </div>
-      </div>`).join('');
-  }
-  if (!html) html = '<div class="empty">Sin tickets. Tap + para agregar.</div>';
-  cont.innerHTML = html;
+// ── MAPS ──
+function loadGoogleMaps() {
+  if (mapsLoaded || window.google) return;
+  mapsLoaded = true;
+  const script = document.createElement('script');
+  script.src = `https://maps.googleapis.com/maps/api/js?key=${MAPS_KEY}&callback=initDayMap&libraries=places`;
+  script.async = true;
+  document.head.appendChild(script);
 }
 
-window.openTicketModal = function(key) {
-  if (key && key !== 'null') {
-    const t = tickets.find(x=>x._key===key);
-    document.getElementById('ticket-modal-title').textContent = 'Editar ticket';
-    document.getElementById('t-id').value = key;
-    document.getElementById('t-nombre').value = t.nombre||'';
-    document.getElementById('t-tipo').value = t.tipo||'📄';
-    document.getElementById('t-fecha').value = t.fecha||'';
-    document.getElementById('t-detalles').value = t.detalles||'';
-    document.getElementById('t-link').value = t.link||'';
-    document.getElementById('t-estado').value = t.estado||'pendiente';
-  } else {
-    document.getElementById('ticket-modal-title').textContent = 'Nuevo ticket';
-    document.getElementById('t-id').value = '';
-    ['t-nombre','t-fecha','t-detalles','t-link'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('t-estado').value='pendiente';
-  }
-  openModal('modal-ticket');
-};
-window.saveTicket = function() {
-  const nombre = document.getElementById('t-nombre').value.trim();
-  if (!nombre) return;
-  const data = {
-    nombre,
-    tipo:document.getElementById('t-tipo').value,
-    fecha:document.getElementById('t-fecha').value||'',
-    detalles:document.getElementById('t-detalles').value||'',
-    link:document.getElementById('t-link').value||'',
-    estado:document.getElementById('t-estado').value
-  };
-  const key = document.getElementById('t-id').value;
-  if (key) { update(ref(db,'tickets/'+key), data); }
-  else { push(ref(db,'tickets'), data); }
-  closeModal('modal-ticket');
-  showToast('Ticket guardado ✓');
+window.initDayMap = function() {
+  // Called by Google Maps callback — init map for current day
+  initMapForDay(currentIdx);
 };
 
-// ─── ACTIVITIES ───
-function renderActividades() {
-  const cont = document.getElementById('actividades-content');
-  const cities = [...new Set(activities.map(a=>a.ciudad))];
-  cont.innerHTML = cities.map(city => {
-    const acts = activities.filter(a=>a.ciudad===city);
-    return `<div class="city-block">
-      <div class="city-hdr" style="background:var(--text)">${city}</div>
-      ${acts.map(a=>`
-        <div class="act-item">
-          <div class="check-box ${a.done?'checked':''}" onclick="toggleAct('${a._key}',${a.done})">
-            ${a.done?'✓':''}
-          </div>
-          <div class="act-body">
-            <div class="act-name" style="${a.done?'text-decoration:line-through;color:var(--muted)':''}">${a.nombre}</div>
-            ${a.precio?`<div class="act-city">${a.precio}</div>`:''}
-            ${a.link?`<div><a href="${a.link}" target="_blank" style="font-size:11px;color:var(--accent2)">Ver entrada →</a></div>`:''}
-          </div>
-          <button class="icon-btn" onclick="openActModal('${a._key}')">✏️</button>
-        </div>`).join('')}
-    </div>`;
-  }).join('');
-}
+function initMapForDay(idx) {
+  if (!window.google || !days[idx]) return;
+  const d = days[idx];
+  const places = d.places || [];
+  if (!places.length) return;
+  const mapEl = document.getElementById(`map-${idx}`);
+  const loadingEl = document.getElementById(`map-loading-${idx}`);
+  if (!mapEl || dayMaps[idx]) return;
 
-window.toggleAct = function(key, current) {
-  update(ref(db,'activities/'+key), {done: !current});
-};
-window.openActModal = function(key) {
-  const a = activities.find(x=>x._key===key);
-  document.getElementById('a-idx').value = key;
-  document.getElementById('a-nombre').value = a.nombre||'';
-  document.getElementById('a-ciudad').value = a.ciudad||'';
-  document.getElementById('a-precio').value = a.precio||'';
-  document.getElementById('a-link').value = a.link||'';
-  openModal('modal-act');
-};
-window.saveAct = function() {
-  const key = document.getElementById('a-idx').value;
-  const data = {
-    nombre:document.getElementById('a-nombre').value,
-    ciudad:document.getElementById('a-ciudad').value,
-    precio:document.getElementById('a-precio').value,
-    link:document.getElementById('a-link').value,
-  };
-  update(ref(db,'activities/'+key), data);
-  closeModal('modal-act');
-  showToast('Actividad actualizada ✓');
-};
+  const geocoder = new google.maps.Geocoder();
+  const bounds = new google.maps.LatLngBounds();
+  let resolvedCount = 0;
+  const coords = [];
 
-// ─── MAP ───
-let mapInited = false, leafletMap = null;
-function initMap() {
-  if (mapInited) return;
-  mapInited = true;
-  leafletMap = L.map('map', {zoomControl:false}).setView([40.5, 14.5], 6);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap',
-    maxZoom: 18
-  }).addTo(leafletMap);
+  const mapInstance = new google.maps.Map(mapEl, {
+    zoom: 14,
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: false,
+    zoomControl: true,
+    styles: [
+      {elementType:'geometry',stylers:[{color:'#f5f5f5'}]},
+      {elementType:'labels.text.fill',stylers:[{color:'#333333'}]},
+      {elementType:'labels.text.stroke',stylers:[{color:'#ffffff'}]},
+      {featureType:'road',elementType:'geometry',stylers:[{color:'#ffffff'}]},
+      {featureType:'road',elementType:'geometry.stroke',stylers:[{color:'#e0e0e0'}]},
+      {featureType:'water',elementType:'geometry',stylers:[{color:'#c8d8e8'}]},
+      {featureType:'poi',elementType:'labels',stylers:[{visibility:'off'}]},
+      {featureType:'transit',stylers:[{visibility:'off'}]},
+    ]
+  });
+  dayMaps[idx] = mapInstance;
+  if (loadingEl) loadingEl.style.display = 'none';
 
-  // Draw route line
-  const coords = PLACES.map(p => [p.lat, p.lng]);
-  L.polyline(coords, {color:'#C8602A', weight:2, dashArray:'6,5', opacity:0.6}).addTo(leafletMap);
+  places.forEach((place, pi) => {
+    geocoder.geocode({address: place}, (results, status) => {
+      if (status === 'OK') {
+        const loc = results[0].geometry.location;
+        bounds.extend(loc);
+        coords.push(loc);
 
-  // Add markers
-  PLACES.forEach(p => {
-    const icon = L.divIcon({
-      html:`<div style="background:${p.color};width:32px;height:32px;border-radius:50%;border:3px solid white;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,0.25)">${p.emoji}</div>`,
-      className:'',
-      iconSize:[32,32],
-      iconAnchor:[16,16],
+        // Custom pin
+        const marker = new google.maps.Marker({
+          position: loc,
+          map: mapInstance,
+          label: { text: String(pi+1), color: '#fff', fontSize: '11px', fontWeight: '700' },
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 14,
+            fillColor: '#0A0A0A',
+            fillOpacity: 1,
+            strokeColor: '#ffffff',
+            strokeWeight: 2,
+          },
+          title: place,
+        });
+
+        const infoWindow = new google.maps.InfoWindow({
+          content: `<div style="font-family:-apple-system,sans-serif;font-size:13px;font-weight:500;padding:2px 0">${place.split(',')[0]}</div>`
+        });
+        marker.addListener('click', () => infoWindow.open(mapInstance, marker));
+      }
+      resolvedCount++;
+      if (resolvedCount === places.length) {
+        if (coords.length > 1) {
+          mapInstance.fitBounds(bounds, {top:30,right:30,bottom:30,left:30});
+        } else if (coords.length === 1) {
+          mapInstance.setCenter(coords[0]);
+          mapInstance.setZoom(15);
+        }
+        // Update open maps link with multi-place query
+        const mapsLink = document.querySelector(`#card-${idx} .open-maps-btn`);
+        if (mapsLink && coords.length > 0) {
+          const dest = places[places.length-1];
+          const waypoints = places.slice(0,-1).map(p=>`+to:${encodeURIComponent(p)}`).join('');
+          mapsLink.href = `https://www.google.com/maps/dir/${encodeURIComponent(places[0])}${waypoints}/${encodeURIComponent(dest)}`;
+        }
+      }
     });
-    L.marker([p.lat,p.lng], {icon})
-      .addTo(leafletMap)
-      .bindPopup(`<b>${p.name}</b><br>${p.region}<br><small>${p.dates} · ${p.noches} noches</small>`);
+  });
+}
+
+// ── NAVIGATION ──
+function goToDay(idx, animate=true) {
+  currentIdx = idx;
+  updateSwipePosition(animate);
+  renderNav();
+  // Init map when navigating to that day
+  if (window.google) {
+    setTimeout(() => initMapForDay(idx), 100);
+  } else {
+    loadGoogleMaps();
+  }
+}
+
+function updateSwipePosition(animate=true) {
+  const track = document.getElementById('swipe-track');
+  if (!track) return;
+  if (!animate) track.style.transition = 'none';
+  track.style.transform = `translateX(-${currentIdx * 100}%)`;
+  if (!animate) setTimeout(() => track.style.transition = '', 50);
+}
+
+// ── SWIPE GESTURES ──
+let touchStartX = 0, touchStartY = 0, isSwiping = false;
+document.addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+  isSwiping = false;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+    if (dx < 0 && currentIdx < days.length - 1) goToDay(currentIdx + 1);
+    else if (dx > 0 && currentIdx > 0) goToDay(currentIdx - 1);
+  }
+}, {passive:true});
+
+// ── DONE ──
+async function toggleDone(idx) {
+  const newVal = !(checkedDays && checkedDays[idx]);
+  checkedDays = checkedDays || {};
+  checkedDays[idx] = newVal;
+  await fbUpdate('italia/checkedDays', {[idx]: newVal});
+  updateCheckedUI();
+}
+
+function updateCheckedUI() {
+  days.forEach((d, i) => {
+    const btn = document.querySelector(`#card-${i} .done-btn-hero`);
+    if (btn) {
+      const done = checkedDays && checkedDays[i];
+      btn.className = `done-btn-hero ${done?'done':''}`;
+      btn.textContent = done ? '✓ Listo' : 'Marcar listo';
+    }
+  });
+}
+
+// ── EDIT ──
+function openEdit(idx) {
+  const d = days[idx];
+  document.getElementById('edit-idx').value = idx;
+  document.getElementById('edit-ciudad').value = d.ciudad||'';
+  document.getElementById('edit-checkin').value = d.checkin||'';
+  document.getElementById('edit-transport').value = d.transport||'';
+  document.getElementById('edit-actividades').value = d.actividades||'';
+  document.getElementById('edit-pendiente').value = d.pendiente||'';
+  openModal('modal-edit');
+}
+
+async function saveEdit() {
+  const idx = +document.getElementById('edit-idx').value;
+  days[idx].ciudad = document.getElementById('edit-ciudad').value;
+  days[idx].checkin = document.getElementById('edit-checkin').value;
+  days[idx].transport = document.getElementById('edit-transport').value;
+  days[idx].actividades = document.getElementById('edit-actividades').value;
+  days[idx].pendiente = document.getElementById('edit-pendiente').value;
+  await fbSet('italia/days', days);
+  closeModal('modal-edit');
+  // Re-render this card
+  const card = document.getElementById(`card-${idx}`);
+  if (card) {
+    const newHTML = renderDayCard(days[idx], idx);
+    const tmp = document.createElement('div');
+    tmp.innerHTML = newHTML;
+    card.replaceWith(tmp.firstElementChild);
+    if (window.google) { dayMaps[idx] = null; setTimeout(()=>initMapForDay(idx),100); }
+  }
+  renderNav();
+  showToast('Día actualizado ✓');
+}
+
+// ── SWAP ──
+function openSwap(idx) {
+  swapFromIdx = idx;
+  swapToIdx = null;
+  const d = days[idx];
+  document.getElementById('swap-title').textContent = `Intercambiar: ${d.fecha} ${d.ciudad.substring(0,20)}`;
+  const siblings = days.map((dd,ii) => ({...dd, idx:ii})).filter(dd => dd.seccion === d.seccion && !dd.locked && dd.idx !== idx);
+  document.getElementById('swap-day-list').innerHTML = siblings.map(s => `
+    <div class="swap-day-item" id="swap-item-${s.idx}" onclick="selectSwapTarget(${s.idx})">
+      <div class="swap-day-date">${s.fecha}</div>
+      <div class="swap-day-name">${s.ciudad}</div>
+      <div class="swap-day-check" id="swap-check-${s.idx}"></div>
+    </div>`).join('');
+  openModal('modal-swap');
+}
+
+function selectSwapTarget(idx) {
+  if (swapToIdx !== null) {
+    document.getElementById(`swap-item-${swapToIdx}`)?.classList.remove('selected');
+  }
+  swapToIdx = idx;
+  document.getElementById(`swap-item-${idx}`)?.classList.add('selected');
+  document.getElementById(`swap-check-${idx}`).textContent = '✓';
+}
+
+async function confirmSwap() {
+  if (swapToIdx === null) { showToast('Elegí un día primero'); return; }
+  const fields = ['ciudad','checkin','transport','actividades','pendiente','places'];
+  fields.forEach(f => {
+    const tmp = days[swapFromIdx][f];
+    days[swapFromIdx][f] = days[swapToIdx][f];
+    days[swapToIdx][f] = tmp;
+  });
+  await fbSet('italia/days', days);
+  closeModal('modal-swap');
+
+  // Re-render both cards
+  [swapFromIdx, swapToIdx].forEach(idx => {
+    const card = document.getElementById(`card-${idx}`);
+    if (card) {
+      const tmp = document.createElement('div');
+      tmp.innerHTML = renderDayCard(days[idx], idx);
+      card.replaceWith(tmp.firstElementChild);
+      dayMaps[idx] = null;
+    }
+  });
+  renderNav();
+  if (window.google) { setTimeout(()=>initMapForDay(currentIdx),100); }
+  showToast('Días intercambiados ✓');
+  swapFromIdx = null; swapToIdx = null;
+}
+
+// ── CALENDAR ──
+const CITY_COLORS = {
+  'Vuelo': '#888888',
+  'Palermo': '#2A6E8A',
+  'Agrigento': '#B8750A',
+  'Catania': '#C53030',
+  'Amalfi': '#2D7A5A',
+  'Positano': '#C8602A',
+  'Roma': '#534AB7',
+};
+
+function openCal() {
+  const todayIdx = getTodayIdx();
+
+  // Build a map: "DD-MM" → {idx, seccion}
+  const tripMap = {};
+  days.forEach((d, i) => { tripMap[d.fecha] = {idx: i, seccion: d.seccion}; });
+
+  // Render August and September 2026
+  const months = [
+    {year: 2026, month: 7, name: 'Agosto 2026'},   // month is 0-indexed
+    {year: 2026, month: 8, name: 'Septiembre 2026'},
+  ];
+  const weekdays = ['D','L','M','M','J','V','S'];
+  const today = new Date();
+
+  let html = '';
+
+  months.forEach(({year, month, name}) => {
+    const firstDay = new Date(year, month, 1).getDay(); // 0=Sun
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    html += `<div class="cal-month">
+      <div class="cal-month-name">${name}</div>
+      <div class="cal-weekdays">${weekdays.map(w=>`<div class="cal-weekday">${w}</div>`).join('')}</div>
+      <div class="cal-grid">`;
+
+    // Empty cells before first day
+    for (let e = 0; e < firstDay; e++) {
+      html += `<div class="cal-cell"></div>`;
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dd = String(d).padStart(2,'0');
+      const mm = String(month + 1).padStart(2,'0');
+      const key = `${dd}-${mm}`;
+      const trip = tripMap[key];
+      const isToday = today.getFullYear()===year && today.getMonth()===month && today.getDate()===d;
+      const isCurrent = trip && trip.idx === currentIdx;
+      const color = trip ? (CITY_COLORS[trip.seccion] || '#333') : null;
+
+      if (trip) {
+        html += `<div class="cal-cell in-trip ${isCurrent?'is-current':''} ${isToday&&!isCurrent?'is-today':''}"
+          onclick="goToDay(${trip.idx});closeCal()">
+          ${d}
+          ${!isCurrent && color ? `<span class="city-dot" style="background:${color}"></span>` : ''}
+        </div>`;
+      } else {
+        html += `<div class="cal-cell ${isToday?'is-today':''}">${d}</div>`;
+      }
+    }
+
+    html += `</div></div>`;
   });
 
-  // Bottom cards
-  document.getElementById('map-cards').innerHTML = PLACES.map(p=>`
-    <div class="map-card" onclick="flyTo(${p.lat},${p.lng})">
-      <div class="map-card-name">${p.emoji} ${p.name}</div>
-      <div class="map-card-sub">${p.region}</div>
-      <div class="map-card-days">${p.dates} · ${p.noches} noches</div>
-    </div>`).join('');
+  // Legend
+  const uniqueSections = [...new Set(days.map(d=>d.seccion))].filter(s=>s!=='Vuelo');
+  html += `<div class="cal-legend">
+    ${uniqueSections.map(s=>`<div class="cal-legend-item">
+      <div class="cal-legend-dot" style="background:${CITY_COLORS[s]||'#333'}"></div>
+      ${s}
+    </div>`).join('')}
+  </div>`;
+
+  document.getElementById('cal-content').innerHTML = html;
+  document.getElementById('cal-overlay').classList.add('open');
 }
+function closeCal() { document.getElementById('cal-overlay').classList.remove('open'); }
 
-window.flyTo = function(lat, lng) {
-  if (leafletMap) leafletMap.flyTo([lat,lng], 13, {duration:1.2});
-};
+// ── MODAL ──
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-// ─── MODAL HELPERS ───
-window.openModal = function(id) { document.getElementById(id).classList.add('open'); };
-window.closeModal = function(id) { document.getElementById(id).classList.remove('open'); };
-document.querySelectorAll('.modal-overlay').forEach(m => {
-  m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); });
-});
-
-// ─── TOAST ───
-window.showToast = function(msg) {
+// ── TOAST ──
+function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2200);
-};
+}
 
-// ─── INIT ───
-seedIfEmpty().then(() => {
-  initListeners();
-  document.getElementById('fab-gastos').style.display = 'none';
-  document.getElementById('fab-tickets').style.display = 'none';
-}).catch(err => {
-  console.error(err);
-  setSyncStatus(false);
-});
+// ── INIT ──
+async function init() {
+  try {
+    await seedIfEmpty();
+    days = await fbGet('italia/days') || DEFAULT_DAYS;
+    const cd = await fbGet('italia/checkedDays');
+    checkedDays = cd || {};
+    setSyncStatus(true);
+  } catch(e) {
+    days = DEFAULT_DAYS;
+    setSyncStatus(false);
+  }
+
+  // Go to today or day 0
+  const todayIdx = getTodayIdx();
+  currentIdx = todayIdx;
+
+  renderAllCards();
+
+  // Hide loading, show app
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+
+  // Load maps after render
+  loadGoogleMaps();
+
+  // Start real-time sync
+  try { startSync(); } catch(e) {}
+}
+
+init();
 </script>
 </body>
 </html>
