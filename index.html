@@ -11,13 +11,19 @@
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍋</text></svg>">
 <style>
 :root {
-  --black: #0A0A0A;
+  --black: #1A2A2E;
   --white: #FFFFFF;
-  --gray-100: #F5F5F5;
-  --gray-200: #E8E8E8;
-  --gray-300: #D0D0D0;
-  --gray-500: #888888;
-  --gray-700: #444444;
+  --bg: #F0F4F6;
+  --bg-dark: #E2EDF0;
+  --teal: #B0D9D9;
+  --teal-dark: #80C0C0;
+  --accent: #FF6740;
+  --accent-dark: #E04E28;
+  --gray-100: #E4EDF0;
+  --gray-200: #D0E0E4;
+  --gray-300: #B0CDD4;
+  --gray-500: #6A9AA8;
+  --gray-700: #2A5A68;
   --font: -apple-system,'SF Pro Display','Helvetica Neue',sans-serif;
   --safe-top: env(safe-area-inset-top,0px);
   --safe-bottom: env(safe-area-inset-bottom,0px);
@@ -25,7 +31,7 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden}
-body{font-family:var(--font);background:var(--white);color:var(--black);-webkit-font-smoothing:antialiased}
+body{font-family:var(--font);background:var(--bg);color:var(--black);-webkit-font-smoothing:antialiased}
 
 /* ── APP ── */
 #app{display:flex;flex-direction:column;height:100vh;height:100dvh}
@@ -33,59 +39,56 @@ body{font-family:var(--font);background:var(--white);color:var(--black);-webkit-
 /* ── TOP BAR ── */
 .top-bar{
   flex-shrink:0;
-  background:var(--white);
-  border-bottom:1px solid var(--gray-200);
+  background:var(--teal);
+  border-bottom:none;
   position:relative;z-index:10;
   padding-top:calc(var(--safe-top) + 12px);
 }
 .top-bar-row1{display:flex;align-items:center;justify-content:space-between;padding:0 18px 10px}
-.top-title{font-size:20px;font-weight:700;letter-spacing:-0.4px}
+.top-title{font-size:20px;font-weight:700;letter-spacing:-0.4px;color:#1E5F6A}
 .top-right{display:flex;align-items:center;gap:8px}
-.sync-pill{display:flex;align-items:center;gap:5px;background:var(--gray-100);border-radius:20px;padding:5px 10px}
-.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--gray-300);transition:background .3s}
+.sync-pill{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.3);border-radius:20px;padding:5px 10px}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.5);transition:background .3s}
 .sync-dot.ok{background:#22C55E}
 .sync-dot.err{background:#EF4444}
-.sync-label{font-size:11px;color:var(--gray-500)}
-.cal-btn{width:36px;height:36px;border-radius:50%;background:var(--black);color:var(--white);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sync-label{font-size:11px;color:#1E5F6A;opacity:0.8}
+.cal-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.45);color:#1E5F6A;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 
 /* ── DAY NAV ROW ── */
-.day-nav-row{display:flex;align-items:center;gap:0;padding:0 12px 10px;gap:6px}
+.day-nav-row{display:flex;align-items:center;padding:0 12px 12px;gap:6px;background:var(--teal)}
 .day-nav-pills{flex:1;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;display:flex;gap:6px;padding:2px 0}
 .day-nav-pills::-webkit-scrollbar{display:none}
-.day-pill{flex-shrink:0;padding:6px 13px;border-radius:20px;border:1.5px solid var(--gray-200);background:var(--white);cursor:pointer;font-size:12px;font-weight:500;color:var(--gray-500);transition:all .15s;white-space:nowrap;font-family:var(--font)}
-.day-pill.active{background:var(--black);border-color:var(--black);color:var(--white)}
-.day-pill.today{border-color:var(--black);color:var(--black)}
-.nav-arrow-btn{flex-shrink:0;width:34px;height:34px;border-radius:50%;border:1.5px solid var(--gray-200);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-size:14px;color:var(--black)}
-.nav-arrow-btn:active{background:var(--gray-100)}
-.nav-arrow-btn:disabled{opacity:0.3;cursor:not-allowed}
+.day-pill{flex-shrink:0;padding:6px 13px;border-radius:20px;border:1.5px solid rgba(30,95,106,0.2);background:rgba(255,255,255,0.25);cursor:pointer;font-size:12px;font-weight:500;color:rgba(30,95,106,0.5);transition:all .15s;white-space:nowrap;font-family:var(--font)}
+.day-pill.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.day-pill.today{border-color:#1E5F6A;color:#1E5F6A;background:rgba(255,255,255,0.4)}
+.nav-arrow-btn{flex-shrink:0;width:34px;height:34px;border-radius:50%;border:1.5px solid rgba(30,95,106,0.2);background:rgba(255,255,255,0.25);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;color:#1E5F6A}
+.nav-arrow-btn:active{background:rgba(255,255,255,0.2)}
+.nav-arrow-btn:disabled{opacity:0.25;cursor:not-allowed}
+.nav-arrow-btn svg path{stroke:#1E5F6A}
 
 /* ── MAIN ── */
 .main{flex:1;overflow:hidden;position:relative}
 .swipe-container{position:absolute;inset:0;overflow:hidden}
 .swipe-track{display:flex;height:100%;transition:transform .3s cubic-bezier(.4,0,.2,1);will-change:transform}
-.day-card{flex-shrink:0;width:100%;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:40px}
-
+.day-card{flex-shrink:0;width:100%;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:20px;background:var(--bg)}
 /* ── DAY HERO ── */
-.day-hero{padding:20px 20px 16px;border-bottom:1px solid var(--gray-200);position:relative}
+.day-hero{padding:16px;margin:12px 12px 0;border-radius:14px;background:var(--white);border:0.5px solid var(--gray-200)}
 .day-hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
 .day-label{font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;display:flex;align-items:center;gap:6px}
 .day-title{font-size:24px;font-weight:700;letter-spacing:-.4px;line-height:1.2}
-.day-date-badge{background:var(--black);color:var(--white);border-radius:10px;padding:6px 10px;text-align:center;flex-shrink:0}
-.badge-day{font-size:18px;font-weight:700;line-height:1}
-.badge-month{font-size:10px;text-transform:uppercase;letter-spacing:.08em;opacity:.7;margin-top:1px}
+.day-date-badge{background:var(--accent);color:#fff;border-radius:10px;padding:6px 10px;text-align:center;flex-shrink:0}
+.badge-day{font-size:18px;font-weight:700;line-height:1;color:#fff}
+.badge-month{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,0.75);margin-top:1px}
 .day-hero-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.meta-chip{display:flex;align-items:center;gap:5px;background:var(--gray-100);border-radius:20px;padding:5px 10px;font-size:12px;color:var(--gray-700)}
-.today-badge{display:inline-block;background:var(--black);color:var(--white);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;padding:2px 7px;border-radius:20px}
-.done-btn-hero{background:none;border:1.5px solid var(--gray-300);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:500;color:var(--gray-500);cursor:pointer;font-family:var(--font);transition:all .15s;margin-top:10px}
-.done-btn-hero.done{background:var(--black);border-color:var(--black);color:var(--white)}
+.meta-chip{display:flex;align-items:center;gap:5px;background:var(--bg-dark);border-radius:20px;padding:5px 10px;font-size:12px;color:var(--gray-700)}
+.today-badge{display:inline-block;background:var(--accent);color:#fff;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;padding:2px 7px;border-radius:20px}
 
-/* ── SECTIONS ── */
-.day-section{padding:16px 20px;border-bottom:1px solid var(--gray-200)}
-.day-section:last-child{border-bottom:none}
+/* ── SECTIONS AS CARDS ── */
+.day-section{padding:14px 16px;background:var(--white);border-radius:14px;border:0.5px solid var(--gray-200);margin:8px 12px 0}
 .section-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--gray-500);margin-bottom:10px}
 
 /* ── TRANSPORT ── */
-.transport-card{background:var(--gray-100);border-radius:12px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px}
+.transport-card{background:var(--bg-dark);border-radius:12px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px}
 .transport-icon{width:28px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .transport-icon svg{width:20px;height:20px;fill:var(--gray-700)}
 .transport-body{flex:1}
@@ -99,7 +102,7 @@ body{font-family:var(--font);background:var(--white);color:var(--black);-webkit-
 .flight-detail{font-size:12px;color:var(--gray-500);margin-top:3px}
 
 /* ── PLAN DEL DÍA ── */
-.plan-section{padding:16px 20px;border-bottom:1px solid var(--gray-200)}
+.plan-section{padding:14px 16px;background:var(--white);border-radius:14px;border:0.5px solid var(--gray-200);margin:8px 12px 0}
 .plan-block{margin-bottom:14px}
 .plan-block:last-child{margin-bottom:0}
 .plan-time-label{font-size:13px;font-weight:700;color:var(--black);margin-bottom:6px;margin-top:2px}
@@ -108,15 +111,15 @@ body{font-family:var(--font);background:var(--white);color:var(--black);-webkit-
 .plan-item::before{content:'';position:absolute;left:0;top:9px;width:4px;height:4px;border-radius:50%;background:var(--gray-300)}
 
 /* ── RECORDAR ── */
-.recordar-card{background:var(--gray-100);border-radius:12px;padding:12px 14px;font-size:13px;color:var(--gray-700);line-height:1.5}
-.recordar-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}
+.recordar-card{background:transparent;padding:4px 0;font-size:13px;color:var(--gray-700);line-height:1.5}
+.recordar-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:5px;font-size:13px;color:var(--gray-700)}
 .recordar-item:last-child{margin-bottom:0}
 .recordar-bullet{width:5px;height:5px;border-radius:50%;background:var(--gray-500);flex-shrink:0;margin-top:6px}
 
 /* ── TICKETS ── */
 .ticket-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--white);border:1px solid var(--gray-200);border-radius:10px;margin-bottom:6px;text-decoration:none;color:inherit}
 .ticket-item:last-child{margin-bottom:0}
-.ticket-icon-wrap{width:32px;height:32px;border-radius:8px;background:var(--gray-100);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ticket-icon-wrap{width:32px;height:32px;border-radius:8px;background:var(--bg-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .ticket-icon-wrap svg{width:16px;height:16px;fill:var(--gray-700)}
 .ticket-body{flex:1;min-width:0}
 .ticket-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -124,44 +127,44 @@ body{font-family:var(--font);background:var(--white);color:var(--black);-webkit-
 .ticket-arrow{color:var(--gray-300);font-size:14px;flex-shrink:0}
 
 /* ── MAP ── */
-.map-section{padding:16px 20px;border-bottom:1px solid var(--gray-200)}
-.day-map{width:100%;height:220px;border-radius:14px;overflow:hidden;border:1px solid var(--gray-200);background:var(--gray-100);position:relative;outline:none}
+.map-section{padding:14px 16px;background:var(--white);border-radius:14px;border:0.5px solid var(--gray-200);margin:8px 12px 0}
+.day-map{width:100%;height:220px;border-radius:12px;overflow:hidden;border:1px solid var(--gray-200);background:var(--bg-dark);position:relative;outline:none}
 .day-map *{outline:none}
-.map-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--gray-100);border-radius:14px;font-size:13px;color:var(--gray-500)}
-.open-maps-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:10px;padding:12px;background:var(--black);color:var(--white);border:none;border-radius:12px;font-size:14px;font-weight:500;cursor:pointer;font-family:var(--font);text-decoration:none}
+.map-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg-dark);border-radius:12px;font-size:13px;color:var(--gray-500)}
+.open-maps-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:10px;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font);text-decoration:none}
 .map-places{display:flex;flex-direction:column;gap:5px;margin-top:8px}
-.map-place-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--gray-100);border-radius:9px}
-.map-place-num{width:18px;height:18px;border-radius:50%;background:var(--black);color:var(--white);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.map-place-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg-dark);border-radius:9px}
+.map-place-num{width:18px;height:18px;border-radius:50%;background:var(--accent);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .map-place-name{font-size:12px;color:var(--gray-700)}
 
-/* ── SWAP / EDIT BTNS ── */
-.actions-section{padding:14px 20px 20px;display:flex;flex-direction:column;gap:8px}
+/* ── ACTIONS ── */
+.actions-section{padding:12px 12px 20px;display:flex;flex-direction:column;gap:8px;background:var(--bg)}
 .action-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:12px;font-size:14px;font-family:var(--font);font-weight:500;cursor:pointer;transition:all .15s}
-.action-btn-outline{border:1.5px solid var(--gray-200);background:none;color:var(--black)}
-.action-btn-outline:active{background:var(--gray-100)}
-.action-btn-dashed{border:1.5px dashed var(--gray-300);background:none;color:var(--gray-500)}
-.action-btn-dashed:active{background:var(--gray-100)}
+.action-btn-outline{border:1.5px solid var(--gray-200);background:var(--white);color:var(--black)}
+.action-btn-outline:active{background:var(--bg-dark)}
+.action-btn-dashed{border:1.5px dashed var(--gray-300);background:var(--white);color:var(--gray-500)}
+.action-btn-dashed:active{background:var(--bg-dark)}
 
 /* ── PRE/POST TRIP ── */
-.special-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;height:100%}
+.special-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;height:100%;background:var(--bg)}
 .special-screen img{width:160px;height:160px;object-fit:cover;border-radius:20px;margin-bottom:24px}
 .special-title{font-size:26px;font-weight:700;letter-spacing:-.4px;margin-bottom:8px}
 .special-sub{font-size:15px;color:var(--gray-500);line-height:1.5;margin-bottom:24px}
 .countdown-wrap{background:var(--black);color:var(--white);border-radius:16px;padding:20px 28px;margin-bottom:20px}
 .countdown-num{font-size:48px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.5px;line-height:1}
 .countdown-label{font-size:12px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px}
-.countdown-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;background:var(--black);border-radius:16px;padding:16px;margin-bottom:20px}
+.countdown-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;background:var(--accent);border-radius:16px;padding:16px;margin-bottom:20px}
 .countdown-unit{text-align:center}
-.countdown-unit-num{font-size:28px;font-weight:700;color:var(--white);line-height:1}
-.countdown-unit-label{font-size:9px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
-.airport-card{background:var(--gray-100);border-radius:14px;padding:14px 16px;width:100%;text-align:left;margin-top:8px}
+.countdown-unit-num{font-size:28px;font-weight:700;color:#fff;line-height:1}
+.countdown-unit-label{font-size:9px;color:rgba(255,255,255,0.75);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.airport-card{background:var(--bg-dark);border:none;border-radius:14px;padding:14px 16px;width:100%;text-align:left;margin-top:8px}
 .airport-card-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-500);margin-bottom:6px}
 .airport-card-text{font-size:13px;color:var(--gray-700);line-height:1.5}
 
 /* ── CALENDAR MODAL ── */
 .cal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:flex-end;justify-content:center}
 .cal-overlay.open{display:flex}
-.cal-sheet{background:var(--white);border-radius:20px 20px 0 0;width:100%;padding:16px 20px calc(20px + var(--safe-bottom));max-height:70vh;overflow-y:auto}
+.cal-sheet{background:var(--bg);border-radius:20px 20px 0 0;width:100%;padding:16px 20px calc(20px + var(--safe-bottom));max-height:70vh;overflow-y:auto}
 /* Desktop: smaller modal */
 @media(min-width:600px){
   .cal-sheet{max-width:420px;border-radius:20px;margin-bottom:40px;max-height:80vh}
@@ -175,8 +178,8 @@ body{font-family:var(--font);background:var(--white);color:var(--black);-webkit-
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
 .cal-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:13px;font-weight:500;color:var(--gray-300);position:relative;font-family:var(--font)}
 .cal-cell.in-trip{color:var(--black);cursor:pointer}
-.cal-cell.in-trip:active{background:var(--gray-200)}
-.cal-cell.is-current{background:var(--black);color:var(--white)!important}
+.cal-cell.in-trip:active{background:var(--bg-dark)}
+.cal-cell.is-current{background:var(--accent);color:var(--white)!important}
 .cal-cell.is-today:not(.is-current){border:2px solid var(--black)}
 .city-dot{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%}
 .cal-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
@@ -186,24 +189,24 @@ body{font-family:var(--font);background:var(--white);color:var(--black);-webkit-
 /* ── MODALS ── */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;justify-content:center}
 .modal-overlay.open{display:flex}
-.modal-sheet{background:var(--white);border-radius:20px 20px 0 0;width:100%;max-height:90vh;overflow-y:auto;padding:20px 20px calc(20px + var(--safe-bottom))}
+.modal-sheet{background:var(--bg);border-radius:20px 20px 0 0;width:100%;max-height:90vh;overflow-y:auto;padding:20px 20px calc(20px + var(--safe-bottom))}
 @media(min-width:600px){.modal-sheet{max-width:480px;border-radius:20px;margin-bottom:40px}}
 .modal-handle{width:36px;height:4px;background:var(--gray-300);border-radius:2px;margin:0 auto 16px}
 .modal-title{font-size:20px;font-weight:700;letter-spacing:-.3px;margin-bottom:16px}
 .field{margin-bottom:12px}
 .field label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-500);display:block;margin-bottom:5px}
 .field input,.field select,.field textarea{width:100%;padding:11px 13px;border:1.5px solid var(--gray-200);border-radius:12px;background:var(--white);color:var(--black);font-size:15px;font-family:var(--font);outline:none;-webkit-appearance:none}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--black)}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#1E5F6A}
 .field textarea{resize:vertical;min-height:80px;line-height:1.5}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .modal-actions{display:flex;gap:10px;margin-top:16px}
 .btn{padding:13px 18px;border-radius:12px;border:none;cursor:pointer;font-size:15px;font-family:var(--font);font-weight:600;flex:1;transition:all .15s;text-align:center}
-.btn-black{background:var(--black);color:var(--white)}
-.btn-gray{background:var(--gray-100);color:var(--black)}
+.btn-black{background:#1E5F6A;color:var(--white)}
+.btn-gray{background:var(--bg-dark);color:var(--black)}
 
 /* ── SWAP MODAL ── */
 .swap-intro{font-size:13px;color:var(--gray-500);margin-bottom:14px;line-height:1.5}
-.swap-from-card{background:var(--gray-100);border-radius:12px;padding:12px 14px;margin-bottom:16px}
+.swap-from-card{background:var(--bg-dark);border-radius:12px;padding:12px 14px;margin-bottom:16px}
 .swap-from-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-500);margin-bottom:4px}
 .swap-from-day{font-size:15px;font-weight:600}
 .swap-divider{display:flex;align-items:center;gap:10px;margin-bottom:14px}
@@ -211,7 +214,7 @@ body{font-family:var(--font);background:var(--white);color:var(--black);-webkit-
 .swap-divider-text{font-size:11px;color:var(--gray-500);font-weight:500;text-transform:uppercase;letter-spacing:.06em}
 .swap-day-list{display:flex;flex-direction:column;gap:7px}
 .swap-day-item{display:flex;align-items:center;gap:12px;padding:13px 14px;border:1.5px solid var(--gray-200);border-radius:12px;cursor:pointer;transition:all .15s;background:var(--white)}
-.swap-day-item.selected{border-color:var(--black);background:var(--gray-100)}
+.swap-day-item.selected{border-color:#1E5F6A;background:var(--bg-dark)}
 .swap-day-date{font-size:12px;font-weight:700;flex-shrink:0;width:40px}
 .swap-day-name{font-size:13px;color:var(--gray-700);flex:1}
 .swap-day-radio{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--gray-300);flex-shrink:0;display:flex;align-items:center;justify-content:center}
@@ -223,7 +226,7 @@ body{font-family:var(--font);background:var(--white);color:var(--black);-webkit-
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* ── LOADING ── */
-.loading-screen{position:fixed;inset:0;background:var(--white);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:14px}
+.loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:14px}
 .loading-title{font-size:24px;font-weight:700}
 .spinner{width:22px;height:22px;border:2.5px solid var(--gray-200);border-top-color:var(--black);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -244,7 +247,7 @@ body{font-family:var(--font);background:var(--white);color:var(--black);-webkit-
   <div class="top-bar">
     <div class="top-bar-row1">
       <div>
-        <div class="top-title">Italia 2026 🍋</div>
+        <div class="top-title">🍋 Italia 2026</div>
       </div>
       <div class="top-right">
         <div class="sync-pill">
@@ -252,7 +255,7 @@ body{font-family:var(--font);background:var(--white);color:var(--black);-webkit-
           <span class="sync-label" id="sync-label">...</span>
         </div>
         <button class="cal-btn" onclick="openCal()" aria-label="Calendario">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#1E5F6A"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>
       </button>
       </div>
     </div>
@@ -369,7 +372,7 @@ const DEFAULT_DAYS = [
    tickets:[{name:'Vuelos ITA Airways',link:''}],
    locked:true,places:['Aeropuerto Internacional Ezeiza']},
 
-  {fecha:'16-08',dia:'Dom',ciudad:'Palermo',seccion:'Palermo',checkin:'1pm',transport:'bus',
+  {fecha:'16-08',dia:'Dom',ciudad:'Palermo',seccion:'Palermo',checkin:'1pm',transport:'bus',hospedaje:'Completar dirección del Airbnb',
    manana:'10:30 Palazzo dei Normanni y Cappella Palatina\nCentro Histórico: Quattro Canti, Piazza Pretoria, Chiesa della Martorana, Catedral',
    almuerzo:'Mercato di Ballarò o Mercato del Capo',
    tarde:'Teatro Massimo · Via Maqueda · recorrer el centro',
@@ -737,30 +740,32 @@ function renderDayCard(d,i){
   // Transport block
   let transportHTML='';
   if(d.flights&&d.flights.length){
+    const planeSVG=`<svg width="18" height="18" viewBox="0 0 24 24" fill="#2A5A68"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>`;
     transportHTML=`<div class="day-section">
       <div class="section-label">Transporte</div>
-      <div class="transport-card">
-        <div class="transport-icon" style="color:var(--gray-700)">${ICONS.plane}</div>
-        <div class="flight-list">
-          ${d.flights.map(f=>`<div class="flight-item">
-            <div class="flight-num">${f.num}</div>
-            <div class="flight-route"><span>${f.from}</span><span class="flight-arrow">→</span><span>${f.to}</span></div>
-            <div class="flight-detail">${f.dep} → ${f.arr} · ${f.info}</div>
-          </div>`).join('')}
-        </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${d.flights.map(f=>`<div class="ticket-item" style="margin-bottom:0">
+          <div class="ticket-icon-wrap">${planeSVG}</div>
+          <div class="ticket-body">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-500);margin-bottom:3px">${f.num}</div>
+            <div class="ticket-name">${f.from} → ${f.to}</div>
+            <div class="ticket-sub">${f.dep} → ${f.arr} · ${f.info}</div>
+          </div>
+        </div>`).join('')}
       </div>
     </div>`;
   } else if(d.transport){
-    const icon=ICONS[d.transport]||ICONS.bus;
+    const tPaths={plane:'M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z',train:'M12 2c-4 0-8 .5-8 4v9.5C4 17.43 5.57 19 7.5 19L6 20.5v.5h2l2-2h4l2 2h2v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V6c0-3.5-4-4-8-4zm0 2c3.51 0 5.44.49 5.93 1H6.07C6.56 4.49 8.49 4 12 4zM6 8h5v3H6V8zm11 0v3h-5V8h5zm-9.5 7c-.83 0-1.5-.67-1.5-1.5S6.67 12 7.5 12s1.5.67 1.5 1.5S8.33 15 7.5 15zm9 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z',ferry:'M20 21c-1.39 0-2.78-.47-4-1.32-2.44 1.71-5.56 1.71-8 0C6.78 20.53 5.39 21 4 21H2v2h2c1.38 0 2.74-.35 4-.99 2.52 1.29 5.48 1.29 8 0 1.26.64 2.62.99 4 .99h2v-2h-2zM3.95 19H4c1.6 0 3.02-.88 4-2 .98 1.12 2.4 2 4 2s3.02-.88 4-2c.98 1.12 2.4 2 4 2h.05l1.89-6.68c.08-.26.06-.54-.06-.78s-.34-.42-.6-.5L20 10.62V6c0-1.1-.9-2-2-2h-3V1H9v3H6c-1.1 0-2 .9-2 2v4.62l-1.29.42c-.26.08-.48.26-.6.5s-.14.52-.06.78L3.95 19zM6 6h12v3.97L12 8 6 9.97V6z',bus:'M4 16c0 .88.39 1.67 1 2.22V20c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h8v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1.78c.61-.55 1-1.34 1-2.22V6c0-3.5-3.58-4-8-4s-8 .5-8 4v10zm3.5 1c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm9 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm1.5-6H6V6h12v5z'};
+    const icon=`<svg width="18" height="18" viewBox="0 0 24 24" fill="#2A5A68"><path d="${tPaths[d.transport]||tPaths.bus}"/></svg>`;
     const typeLabels={plane:'Vuelo',train:'Tren',ferry:'Ferry',bus:'Bus'};
     const typeLabel=typeLabels[d.transport]||'Transporte';
     transportHTML=`<div class="day-section">
       <div class="section-label">Transporte</div>
-      <div class="transport-card">
-        <div class="transport-icon" style="color:var(--gray-700)">${icon}</div>
-        <div class="transport-body">
-          <div style="font-size:13px;font-weight:600;color:var(--black);margin-bottom:3px">${typeLabel}</div>
-          ${d.transport_text?`<div class="transport-text">${d.transport_text}</div>`:'<div class="transport-text" style="color:var(--gray-300)">Agregar detalles al editar</div>'}
+      <div class="ticket-item" style="margin-bottom:0">
+        <div class="ticket-icon-wrap">${icon}</div>
+        <div class="ticket-body">
+          <div class="ticket-name">${typeLabel}</div>
+          ${d.transport_text?`<div class="ticket-sub">${d.transport_text}</div>`:`<div class="ticket-sub" style="color:var(--gray-500)">Agregar detalles al editar</div>`}
         </div>
       </div>
     </div>`;
@@ -776,12 +781,10 @@ function renderDayCard(d,i){
     const items=recordar.split('\n').filter(r=>r.trim());
     recordarHTML=`<div class="day-section">
       <div class="section-label">Recordar</div>
-      <div class="recordar-card">
-        ${items.map(item=>`<div class="recordar-item">
-          <div class="recordar-bullet"></div>
-          <span>${item}</span>
-        </div>`).join('')}
-      </div>
+      ${items.map(item=>`<div class="recordar-item">
+        <div class="recordar-bullet"></div>
+        <span>${item}</span>
+      </div>`).join('')}
     </div>`;
   }
 
@@ -815,7 +818,7 @@ function renderDayCard(d,i){
   let ticketsHTML='';
   if(tickets.length){
     ticketsHTML=`<div class="day-section">
-      <div class="section-label" style="display:flex;align-items:center;gap:5px"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M22 10V6c0-1.11-.9-2-2-2H4c-1.1 0-1.99.89-1.99 2v4c1.1 0 1.99.9 1.99 2s-.89 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2zm-2-1.46c-1.19.69-2 1.99-2 3.46s.81 2.77 2 3.46V18H4v-2.54c1.19-.69 2-1.99 2-3.46 0-1.48-.8-2.77-2-3.46V6h16v2.54z"/></svg> Tickets y reservas</div>
+      <div class="section-label">Tickets y reservas</div>
       ${tickets.map(t=>`<a class="ticket-item" href="${t.link||'#'}" target="${t.link?'_blank':'_self'}">
         <div class="ticket-icon-wrap">${ICONS.ticket}</div>
         <div class="ticket-body">
@@ -851,21 +854,21 @@ function renderDayCard(d,i){
   return `<div class="day-card" id="card-${i}">
     <div class="day-hero" style="${done?'opacity:0.6':''}">
       <div class="day-hero-top">
-        <div>
+        <div style="flex:1;min-width:0">
           <div class="day-label">
             ${d.seccion}
             ${isToday?`<span class="today-badge">Hoy</span>`:''}
           </div>
           <div class="day-title">${d.ciudad}</div>
+          ${d.hospedaje?`<div style="margin-top:8px"><a href="https://www.google.com/maps/search/${encodeURIComponent(d.hospedaje)}" target="_blank" class="meta-chip" style="text-decoration:none;display:inline-flex"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;margin-right:4px"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>${d.hospedaje}</a></div>`:''}
         </div>
-        <div class="day-date-badge">
-          <div class="badge-day">${day}</div>
-          <div class="badge-month">${monthName}</div>
+        <div style="flex-shrink:0">
+          <div class="day-date-badge">
+            <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,0.8);margin-bottom:2px">${d.dia}</div>
+            <div class="badge-day">${day}</div>
+            <div class="badge-month">${monthName}</div>
+          </div>
         </div>
-      </div>
-      <div class="day-hero-meta">
-        <span style="font-size:14px;font-weight:500;color:var(--gray-500)">${d.dia}</span>
-        ${d.hospedaje?`<a href="https://www.google.com/maps/search/${encodeURIComponent(d.hospedaje)}" target="_blank" class="meta-chip" style="text-decoration:none"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>${d.hospedaje}</a>`:''}
       </div>
     </div>
     ${recordarHTML}
@@ -874,7 +877,10 @@ function renderDayCard(d,i){
     ${ticketsHTML}
     ${mapHTML}
     <div class="actions-section">
-      ${showSwap?`<button class="action-btn action-btn-dashed" onclick="openSwap(${i})">⇄ Intercambiar con otro día</button>`:''}
+      ${showSwap?`<button class="action-btn action-btn-dashed" onclick="openSwap(${i})">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/></svg>
+        Intercambiar con otro día
+      </button>`:''}
       <button class="action-btn action-btn-outline" onclick="openEdit(${i})">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
         Editar este día
@@ -959,7 +965,7 @@ function initMapForDay(idx){
         new google.maps.Marker({
           position:loc,map,
           label:{text:String(pi+1),color:'#fff',fontSize:'11px',fontWeight:'700'},
-          icon:{path:google.maps.SymbolPath.CIRCLE,scale:13,fillColor:'#0A0A0A',fillOpacity:1,strokeColor:'#fff',strokeWeight:2},
+          icon:{path:google.maps.SymbolPath.CIRCLE,scale:13,fillColor:'#E8A020',fillOpacity:1,strokeColor:'#fff',strokeWeight:2},
           title:place,
         });
       }
