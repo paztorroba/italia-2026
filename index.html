@@ -111,7 +111,7 @@ body{font-family:var(--font);background:var(--white);color:var(--black);-webkit-
 .recordar-card{background:var(--gray-100);border-radius:12px;padding:12px 14px;font-size:13px;color:var(--gray-700);line-height:1.5}
 .recordar-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}
 .recordar-item:last-child{margin-bottom:0}
-.recordar-dot{width:16px;height:16px;border-radius:50%;background:var(--black);color:var(--white);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.recordar-bullet{width:5px;height:5px;border-radius:50%;background:var(--gray-500);flex-shrink:0;margin-top:6px}
 
 /* ── TICKETS ── */
 .ticket-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--white);border:1px solid var(--gray-200);border-radius:10px;margin-bottom:6px;text-decoration:none;color:inherit}
@@ -125,7 +125,8 @@ body{font-family:var(--font);background:var(--white);color:var(--black);-webkit-
 
 /* ── MAP ── */
 .map-section{padding:16px 20px;border-bottom:1px solid var(--gray-200)}
-.day-map{width:100%;height:220px;border-radius:14px;overflow:hidden;border:1px solid var(--gray-200);background:var(--gray-100);position:relative}
+.day-map{width:100%;height:220px;border-radius:14px;overflow:hidden;border:1px solid var(--gray-200);background:var(--gray-100);position:relative;outline:none}
+.day-map *{outline:none}
 .map-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--gray-100);border-radius:14px;font-size:13px;color:var(--gray-500)}
 .open-maps-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:10px;padding:12px;background:var(--black);color:var(--white);border:none;border-radius:12px;font-size:14px;font-weight:500;cursor:pointer;font-family:var(--font);text-decoration:none}
 .map-places{display:flex;flex-direction:column;gap:5px;margin-top:8px}
@@ -656,7 +657,7 @@ function getSpecialCard(status){
   if(status==='before'){
     return `<div class="day-card" id="special-card">
       <div class="special-screen" id="countdown-screen">
-        <img src="https://paztorroba.github.io/italia-2026/yippee-cat-kitty.gif" alt="gatito contento" style="width:160px;height:160px;border-radius:20px;object-fit:cover;margin-bottom:16px" onerror="this.style.display='none'">>
+        <img src="https://paztorroba.github.io/italia-2026/yippee-cat-kitty.gif" alt="gatito contento" style="width:160px;height:160px;border-radius:20px;object-fit:cover;margin-bottom:16px" onerror="this.style.display='none'">
         <div class="special-title">¡Falta poco!</div>
         <div class="special-sub">El viaje arranca el sábado 15 de agosto</div>
         <div class="countdown-grid" id="countdown-grid">
@@ -777,8 +778,8 @@ function renderDayCard(d,i){
     recordarHTML=`<div class="day-section">
       <div class="section-label">Recordar</div>
       <div class="recordar-card">
-        ${items.map((item,idx)=>`<div class="recordar-item">
-          <div class="recordar-dot">${idx+1}</div>
+        ${items.map(item=>`<div class="recordar-item">
+          <div class="recordar-bullet"></div>
           <span>${item}</span>
         </div>`).join('')}
       </div>
@@ -867,7 +868,6 @@ function renderDayCard(d,i){
         <span style="font-size:14px;font-weight:500;color:var(--gray-500)">${d.dia}</span>
         ${d.hospedaje?`<a href="https://www.google.com/maps/search/${encodeURIComponent(d.hospedaje)}" target="_blank" class="meta-chip" style="text-decoration:none"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>${d.hospedaje}</a>`:''}
       </div>
-      <button class="done-btn-hero ${done?'done':''}" onclick="toggleDone(${i})">${done?'✓ Listo':'Marcar listo'}</button>
     </div>
     ${recordarHTML}
     ${transportHTML}
@@ -940,6 +940,8 @@ function initMapForDay(idx){
   const map=new google.maps.Map(mapEl,{
     zoom:14,mapTypeControl:false,streetViewControl:false,
     fullscreenControl:false,zoomControl:true,
+    gestureHandling:'greedy',
+    clickableIcons:false,
     styles:[
       {elementType:'geometry',stylers:[{color:'#f5f5f5'}]},
       {elementType:'labels.text.fill',stylers:[{color:'#333'}]},
@@ -949,6 +951,7 @@ function initMapForDay(idx){
       {featureType:'water',elementType:'geometry',stylers:[{color:'#c8d8e8'}]},
       {featureType:'poi',elementType:'labels',stylers:[{visibility:'off'}]},
       {featureType:'transit',stylers:[{visibility:'off'}]},
+      {featureType:'poi.park',elementType:'geometry',stylers:[{color:'#e8f0e8'}]},
     ]
   });
   dayMaps[idx]=map;
