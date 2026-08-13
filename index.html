@@ -677,9 +677,8 @@ function getSpecialCard(status){
     return `<div class="day-card" id="special-card">
       <div class="special-screen">
         <img src="https://paztorroba.github.io/italia-2026/sad-cat-cat-in-front-of-sea.gif" alt="gatito triste" style="width:160px;height:160px;border-radius:20px;object-fit:cover;margin-bottom:20px" onerror="this.style.display='none'">
-        <div class="special-title">El viaje ya terminó</div>
-        <div class="special-sub">Pero los recuerdos quedan para siempre.<br>¡Qué hermoso fue!</div>
-        <div style="margin-top:16px;font-size:22px;font-weight:700;letter-spacing:-.3px">¿A dónde vamos ahora? 🗺️</div>
+        <div class="special-title">Este viaje ya terminó</div>
+        <div class="special-sub">¿A dónde vamos ahora?</div>
       </div>
     </div>`;
   }
@@ -942,17 +941,6 @@ function initMapForDay(idx){
     fullscreenControl:false,zoomControl:true,
     gestureHandling:'greedy',
     clickableIcons:false,
-    styles:[
-      {elementType:'geometry',stylers:[{color:'#f5f5f5'}]},
-      {elementType:'labels.text.fill',stylers:[{color:'#333'}]},
-      {elementType:'labels.text.stroke',stylers:[{color:'#fff'}]},
-      {featureType:'road',elementType:'geometry',stylers:[{color:'#fff'}]},
-      {featureType:'road',elementType:'geometry.stroke',stylers:[{color:'#e0e0e0'}]},
-      {featureType:'water',elementType:'geometry',stylers:[{color:'#c8d8e8'}]},
-      {featureType:'poi',elementType:'labels',stylers:[{visibility:'off'}]},
-      {featureType:'transit',stylers:[{visibility:'off'}]},
-      {featureType:'poi.park',elementType:'geometry',stylers:[{color:'#e8f0e8'}]},
-    ]
   });
   dayMaps[idx]=map;
   if(loadEl) loadEl.style.display='none';
