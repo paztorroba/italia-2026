@@ -134,7 +134,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--black);-webkit-fon
 .open-maps-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:10px;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font);text-decoration:none}
 .map-places{display:flex;flex-direction:column;gap:5px;margin-top:8px}
 .map-place-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg-dark);border-radius:9px}
-.map-place-num{width:18px;height:18px;border-radius:50%;background:var(--accent);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.map-place-num{width:18px;height:18px;border-radius:50%;background:#fff;border:1.5px solid #FF6740;color:#FF6740;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .map-place-name{font-size:12px;color:var(--gray-700)}
 
 /* ── ACTIONS ── */
@@ -962,12 +962,16 @@ function initMapForDay(idx){
         const loc=res[0].geometry.location;
         bounds.extend(loc);
         coords.push(loc);
-        new google.maps.Marker({
+        const marker = new google.maps.Marker({
           position:loc,map,
-          label:{text:String(pi+1),color:'#fff',fontSize:'11px',fontWeight:'700'},
-          icon:{path:google.maps.SymbolPath.CIRCLE,scale:13,fillColor:'#E8A020',fillOpacity:1,strokeColor:'#fff',strokeWeight:2},
+          label:{text:String(pi+1),color:'#FF6740',fontSize:'11px',fontWeight:'700'},
+          icon:{path:google.maps.SymbolPath.CIRCLE,scale:13,fillColor:'#ffffff',fillOpacity:1,strokeColor:'#FF6740',strokeWeight:2.5},
           title:place,
         });
+        const infoWindow = new google.maps.InfoWindow({
+          content:`<div style="font-family:-apple-system,sans-serif;font-size:13px;font-weight:600;color:#1A2A2E;padding:2px 4px;max-width:160px">${place.split(',')[0]}</div>`
+        });
+        marker.addListener('click',()=>{ infoWindow.open(map,marker); });
       }
       done++;
       if(done===places.length){
